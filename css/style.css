@@ -4,24 +4,42 @@ body {
     background-color:#f3f4f6;
     color:#1f2937;
     line-height:1.6; /* espace entre les lignes du texte */
-    margin: 40px; /* espace vide autour de la page, entre le bord et le contenu */
+    margin: 0; /* espace vide autour de la page, entre le bord et le contenu */
 } 
 
 /* Titre */
 h1 {
     color:#334155;
-    font: size 1.5em;
+    font-size:  1.5em;
     text-align:center;
 }
 
 /* Formulaire */
 form {
-    background-color:#ffffff;
-    padding:30px;  /* espagne à l'intériieur  */
     max-width: 400px;
     margin:auto;
-    border-radius:30px;
 }
+
+
+
+/* Presentation :  Bandeau du haut : logo, phrase, image */
+.presentation {
+    background-color:#1e3a8a;
+    color:#ffffff;
+    text-align: center;
+    padding: 30px;
+}
+
+/* Images de la presentation */
+.presentation img {
+    max-width: 100px;
+}
+
+.connexion {
+    max-width: 400px;
+    margin: 40px auto;
+}
+
 
 /* Champs */
 
