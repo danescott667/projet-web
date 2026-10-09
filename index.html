@@ -8,25 +8,36 @@
 </head>
 
 <body>
-    <h1>Bienvenue sur Tchat’</h1>
+    <main class="accueil">
+        <!-- Colonne de gauche : presentation -->
+        <section class="presentation">
+            <img src="images/logosite.png" alt="Logo de Tchat'">
+            <p>petite phrase a definir</p>
+            <img src="images/gif-tempo.png" alt="">
+            
+        </section>
 
-    <form>
+        <!-- Colonne de droite : connexion -->
+        <section class="connexion">
+            <h1>Bienvenue sur Tchat’</h1>
+            <form>
 
 
-        <label for="email">E-mail :</label><br>
-        <input type="email" id="email" name="email"><br>
+                <label for="email">E-mail :</label><br>
+                <input type="email" id="email" name="email"><br>
 
-        <label for="mdp">Mot de Passe :</label><br>
-        <input type="password" id="mdp" name="mdp"><br>
+                <label for="mdp">Mot de Passe :</label><br>
+                <input type="password" id="mdp" name="mdp"><br>
 
-        <input type="checkbox" id="enregistrer" name="enregistrer">
-        <label for="enregistrer">Se souvenir de moi</label><br>
+                <input type="checkbox" id="enregistrer" name="enregistrer">
+                <label for="enregistrer">Se souvenir de moi</label><br>
 
-        <button type="submit">Se connecter</button>
+                <button type="submit">Se connecter</button>
 
-    </form>
-    <a href="inscription.html">S'inscrire</a>
-
+            </form>
+            <a href="inscription.html">S'inscrire</a>
+        </section>
+    </main>
 </body>
 
 </html>
