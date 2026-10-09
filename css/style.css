@@ -8,6 +8,20 @@ body {
 } 
 
 /* Titre */
+h1 {
+    color:#334155;
+    font: size 1.5em;
+    text-align:center;
+}
+
+/* Formulaire */
+form {
+    background-color:#ffffff;
+    padding:30px;  /* espagne à l'intériieur  */
+    max-width: 400px;
+    margin:auto;
+    border-radius:30px;
+}
 
 /* Champs */
 
