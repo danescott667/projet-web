@@ -2,35 +2,43 @@
 <html lang="fr">
 
 <head>
-   <meta charset="UTF-8">
-   <link rel="stylesheet" href="css/style.css">
-   <title> Inscription </title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Page d'inscription</title>
 </head>
 
 <body>
+    <main class="accueil">
+        <!-- Partie du haut : présentation -->
+        <section class="presentation">
+            <img src="images/logosite.png" alt="Logo de Tchat'">
+            <p>petite phrase a definir</p>
+            <img src="images/gif-tempo.png" alt="">
+        </section>
+
+        <!-- Partie du bas : formulaire d'inscription -->
+        <section class="connexion">
+            <h1>Créer un compte</h1>
+            <form>
+                <label for="pseudo">Pseudo :</label><br>
+                <input type="text" id="pseudo" name="pseudo"><br>
+
+                <label for="email">E-mail :</label><br>
+                <input type="email" id="email" name="email"><br>
+
+                <label for="mdp">Mot de Passe :</label><br>
+                <input type="password" id="mdp" name="mdp"><br>
+
+                <label for="cmdp"> Confirmer Mot de Passe :</label><br>
+                <input type="password" id="cmdp" name="cmdp"><br>
 
 
+                <button type="submit">S'inscrire</button>
 
-   <h1>Bienvenue sur Tchat’</h1>
-   <form>
-      <label for="nom">Nom :</label><br>
-      <input type="text" id="nom" name="nom"><br>
-
-      <label for="prenom">Prénom :</label><br>
-      <input type="text" id="prenom" name="prenom"><br>
-
-      <label for="email">E-mail :</label><br>
-      <input type="email" id="email" name="email"><br>
-
-      <label for="mdp">Mot de Passe :</label><br>
-      <input type="password" id="mdp" name="mdp"><br>
-
-      <label for="cmdp">Confirmer votre mot de passe :</label><br>
-      <input type="password" id="cmdp" name="cmdp"><br>
-
-      <button type="submit">S'inscrire</button>
-   </form>
-   <a href="index.html">Vous avez déjà un compte?</a>
+            </form>
+            <a href="index.html">Déjà un compte ? Se connecter</a>
+        </section>
+    </main>
 </body>
 
 </html>
