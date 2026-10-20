@@ -66,10 +66,14 @@ button {
     width: 100%;  /* bouton aussi large que les champs*/ 
 }
 
-
-
-
 /* Liens */
 a {
     color:#1e3a8a;
+}
+
+/* Message d'erreur */
+
+#message-erreur {
+    color:#dc2626;
+    font-size: 0.9em;
 }
