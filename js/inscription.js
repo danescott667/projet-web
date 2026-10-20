@@ -1,11 +1,11 @@
 // Paragraphe où on affiche les messages d'erreur à l'utilisateur
-const mdpMessageErreur = document.querySelector("#message-erreur");
+const messageErreur = document.querySelector("#message-erreur");
 
 // La variable contient le formulaire lui-même
 const formulaire = document.querySelector("form");
 
 // un ecouteur sur le formulaire qui reagit a l'evennement envoyer
-formulaire.addEventListener("submit", function (event) {
+formulaire.addEventListener("submit", async function (event) {
   // permet d'eviter le rechargement automatique du navigateur et permet l'execution de notre code
   event.preventDefault();
 
@@ -22,9 +22,22 @@ formulaire.addEventListener("submit", function (event) {
   console.log(cmdp);
 
   // verifie que les 2 mots de passes sont identiques
-  mdpMessageErreur.textContent = "";
+  messageErreur.textContent = "";
   if (mdp !== cmdp) {
-    mdpMessageErreur.textContent = "Les 2 mots de passe ne correspondent pas.";
+    messageErreur.textContent = "Les 2 mots de passe ne correspondent pas.";
     return;
   }
+
+  // envoies l'email et le mdp à Supabase pour créer le compte
+  const { data, error } = await client.auth.signUp({ email: email, password: mdp });
+
+  // temporaire pour les tests
+  console.log(data, error);
+
+  // renvoie une erreur si supbase refuse la requete
+  if (error) {
+    messageErreur.textContent = error.message;
+    return;
+  }
+
 });
