@@ -40,4 +40,20 @@ formulaire.addEventListener("submit", async function (event) {
     return;
   }
 
+  // insertion de l'id et pseudo de l'utilisateur dans la table profils
+  const { error: erreurProfil } = await client
+    .from("profils")
+    .insert([{
+      id: data.user.id,
+      pseudo: pseudo,
+    }]);
+
+  // gere l'erreur de l'insertion
+  if (erreurProfil) {
+    messageErreur.textContent = erreurProfil.message;
+    return;
+  }
+
+  // redirection vers la page conversation
+  window.location.href = "conversation.html";
 });
