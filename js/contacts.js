@@ -23,6 +23,12 @@ async function chargerContacts() {
     li.textContent = profil.pseudo;
     liste.appendChild(li);
   });
+
+   // renvoie une erreur si supbase refuse la requete
+  if (error) {
+    messageErreur.textContent = error.message;
+    return;
+  }
 }
 // charge les contacts dès l'ouverture de la page
 chargerContacts();

@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/style.css" />
-    <title>Parametres</title>
+    <title>Paramètres</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
-    <script src="js/sessions.js"  defer ></script></script>
+    <script src="js/sessions.js" defer></script>
+    <script src="js/parametres.js" defer></script>
   </head>
 
   <body>
@@ -26,6 +27,22 @@
     </header>
     <!--Paramètres : choix de la langue (Dane) -->
 
-    <main></main>
+    <main>
+      <h1>Paramètres</h1>
+      <section class="connexion">
+        <form>
+          <label for="langue">Langue de traduction</label>
+          <select id="langue">
+            <option value="fr">FR</option>
+            <option value="en">EN</option>
+            <option value="es">ES</option>
+            <option value="de">DE</option>
+            <option value="zh">CN</option>
+          </select>
+          <button type="submit">Enregistrer</button>
+          <p id="message-erreur"></p>
+          <p id="message-succes"></p>
+      </section>
+    </main>
   </body>
 </html>

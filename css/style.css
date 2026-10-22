@@ -41,7 +41,8 @@ form {
 /* Champs */
 input[type="email"],
 input[type="password"],
-input[type="text"] {
+input[type="text"],
+input[type="select"] {
   width: 100%;
   padding: 10px;
   border: 1px solid #d1d5db; /* bordure fine gris clair*/
