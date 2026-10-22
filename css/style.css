@@ -42,7 +42,7 @@ form {
 input[type="email"],
 input[type="password"],
 input[type="text"],
-input[type="select"] {
+select {
   width: 100%;
   padding: 10px;
   border: 1px solid #d1d5db; /* bordure fine gris clair*/
@@ -125,4 +125,6 @@ header a {
   border: 1px solid #d1d5db ; 
 
 }
+/* message de succes */
 
+#message-succes { color: #15803d; }

@@ -1,13 +1,13 @@
- // Paragraphe où on affiche les messages d'erreur à l'utilisateur
-  const messageErreur = document.querySelector("#message-erreur");
+// Paragraphe où on affiche les messages d'erreur à l'utilisateur
+const messageErreur = document.querySelector("#message-erreur");
 
- // Paragraphe où on affiche les messages  à succes de l'utilisateur
-  const messageSucces= document.querySelector("#message-succes");
+// Paragraphe où on affiche les messages  à succes de l'utilisateur
+const messageSucces = document.querySelector("#message-succes");
 
 
 // fonction pour charger la langue
 async function chargerLangue() {
- 
+
 
   // obtenir la session
   const { data } = await client.auth.getSession();
@@ -57,15 +57,18 @@ formulaire.addEventListener("submit", async function (event) {
 
   // récupère seulement mon profil
   const { error } = await client
-  
-  .from("profils")
-  .update({ langue: langue })
-  .eq("id", monId)
 
-    // renvoie une erreur si supbase refuse la requete
+    .from("profils")
+    .update({ langue: langue })
+    .eq("id", monId);
+
+  // renvoie une erreur si supbase refuse la requete
   if (error) {
-    messageSucces.textContent = messageSucces.message;
-    return;
+    messageErreur.textContent = error.message;
+  }
+
+  else {
+    messageSucces.textContent = "Langue enregistrée";
   }
 
 });
