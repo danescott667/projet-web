@@ -6,15 +6,16 @@
     <title>Contacts</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
-    <script src="js/sessions.js" defer ></script></script>
+    <script src="js/sessions.js" defer></script>
+    <script src="js/contacts.js" defer></script>
   </head>
 
   <body>
     <!--En-tête commun aux pages connectées : logo, menu, déconnexion -->
 
     <header class="presentation">
-        <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
-        <p>Vos conversations, simplement.</p>
+      <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
+      <p>Vos conversations, simplement.</p>
       <nav>
         <ul>
           <li><a href="conversation.html">Conversations</a></li>
@@ -25,7 +26,9 @@
       <button type="button" id="deconnexion">Se déconnecter</button>
     </header>
     <!-- Liste de contacts (Dane) -->
-
-    <main></main>
+    <main>
+      <h1>Mes contacts</h1>
+      <ul id="liste-contacts"></ul>
+    </main>
   </body>
 </html>
