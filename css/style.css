@@ -1,79 +1,102 @@
 /* Général */
 body {
-    font-family: Arial, sans-serif;
-    background-color:#f3f4f6;
-    color:#1f2937;
-    line-height:1.6; /* espace entre les lignes du texte */
-    margin: 0; 
-} 
+  font-family: Arial, sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  line-height: 1.6; /* espace entre les lignes du texte */
+  margin: 0;
+}
 
 /* Titre */
 h1 {
-    color:#334155;
-    font-size:  1.5em;
-    text-align:center;
+  color: #334155;
+  font-size: 1.5em;
+  text-align: center;
 }
 
 /* Formulaire */
 form {
-    max-width: 400px;
-    margin:auto;
+  max-width: 400px;
+  margin: auto;
 }
-
-
 
 /* Presentation :  Bandeau du haut : logo, phrase, image */
 .presentation {
-    background-color:#1e3a8a;
-    color:#ffffff;
-    text-align: center;
-    padding: 30px;
+  background-color: #1e3a8a;
+  color: #ffffff;
+  text-align: center;
+  padding: 30px;
 }
 
 /* Images de la presentation */
 .presentation img {
-    max-width: 100px;
+  max-width: 100px;
 }
 /* Connexion */
 .connexion {
-    max-width: 400px;
-    margin: 40px auto;
+  max-width: 400px;
+  margin: 40px auto;
 }
-
-
 
 /* Champs */
 input[type="email"],
 input[type="password"],
 input[type="text"] {
-    width: 100%;
-    padding:10px;
-    border: 1px solid #d1d5db ;/* bordure fine gris clair*/
-    margin-bottom:15px;
-    border-radius: 6px;
-
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db; /* bordure fine gris clair*/
+  margin-bottom: 15px;
+  border-radius: 6px;
 }
-
 
 /* Bouton */
 button {
-    background-color: #1e3a8a;
-    color:#ffffff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size:1em;
-    width: 100%;  /* bouton aussi large que les champs*/ 
+  background-color: #1e3a8a;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  width: 100%; /* bouton aussi large que les champs*/
 }
 
 /* Liens */
 a {
-    color:#1e3a8a;
+  color: #1e3a8a;
 }
 
 /* Message d'erreur */
 
 #message-erreur {
-    color:#dc2626;
-    font-size: 0.9em;
+  color: #dc2626;
+  font-size: 0.9em;
+}
+
+/* en-tête commun*/
+
+/* Menu sans puces ni décalage */
+
+header ul {
+  list-style: none;
+  padding: 0;
+}
+
+/* Style liste*/
+
+header li {
+  margin: 0 10px;
+  display: inline; /* inline : les li restent sur la même ligne au lieu de prendre chacun toute la largeur */
+}
+
+/* Liens du menu en blanc sur le bandeau bleu */
+
+header a {
+  color: #ffffff;
+}
+/* Style bouton deconnexion*/
+
+#deconnexion {
+  width: auto;
+  background-color: #ffffff;
+  color: #1e3a8a;
 }
