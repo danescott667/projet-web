@@ -1,20 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>Parametres</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
-</head>
+  </head>
 
+  <body>
+    <!--En-tête commun aux pages connectées : logo, menu, déconnexion -->
 
-<body>
-    <main class="liste-contact">
-        <!-- Partie du haut : présentation -->
-       
-    </main>
-</body>
+    <header class="presentation">
+      <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
+      <p>Vos conversations, simplement.</p>
+      <nav>
+        <ul>
+          <li><a href="conversation.html">Conversations</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="parametres.html">Paramètres</a></li>
+        </ul>
+      </nav>
+      <button type="button" id="deconnexion">Se déconnecter</button>
+    </header>
+    <!--Paramètres : choix de la langue (Dane) -->
 
+    <main></main>
+  </body>
 </html>
