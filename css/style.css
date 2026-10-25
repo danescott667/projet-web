@@ -149,3 +149,94 @@ header a {
     margin: 20px 16px;
   }
 }
+
+.liste-conversations {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+div li {
+  display: flex;
+  align-items: center;
+  background-color:#ffffff;
+  border: 1px solid;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 12px 15px;
+}
+
+div li:hover {
+    background-color: #55a7e6;
+  }
+
+.profil {
+  display: flex;
+  flex-direction: calc(100% - 70px);
+  gap: 20px;
+  padding: 20px;
+}
+
+.liste-conversation {
+  width: 300px;
+  border-right: 3px solid #000000;
+}
+.recherche {
+  padding: 2px;
+  width: 40%;
+  cursor: pointer;
+}
+
+.message-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.envoi-barre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: none;
+}
+.envoi-barre input {
+    margin-bottom: 0;
+    border-radius: 20px;
+}
+.envoi-barre button {
+    width: auto;           /* annule le width:100% du bouton général */
+    border-radius: 20px;
+}
+
+.messages {
+  box-shadow: 0 4px 12px;
+  border-radius: 12px;
+  overflow-y: auto;
+  max-height: 400px;
+}
+
+.historique-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bulle{
+  padding: 10px 16px;
+  border-radius: 18px;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+.message-envoye {
+  background-color: #55a7e6;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message-recu {
+  background-color: #d5d0d0;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}

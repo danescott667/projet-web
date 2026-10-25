@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Contacts</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/sessions.js" defer></script>
+    <script src="js/contacts.js" defer></script>
+  </head>
+
+  <body>
+    <!--En-tête commun aux pages connectées : logo, menu, déconnexion -->
+
+    <header class="presentation">
+      <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
+      <p>Vos conversations, simplement.</p>
+      <nav>
+        <ul>
+          <li><a href="conversation.html">Conversations</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="parametres.html">Paramètres</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="profil">
+        <aside class="liste-conversation">
+            <h2>Discussions</h2>
+            <input type="search" placeholder="Rechercher une discussion...">
+            <button class="recherche">Rechercher</button>
+            <div class="liste-conversations">
+                <li>Avi</li>
+                <li>John</li>
+                <li>Jane</li>
+            </div>
+        </aside>
+        <section class="message-container">
+            <div class="message-header">
+                <h2>Avi</h2>
+            </div>
+                <div class="messages">
+                    <div class="historique-messages">
+                        <div class="bulle message-recu">
+                            <p>Message 1</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 2</p>
+                        </div>
+                        <div class="bulle message-recu">
+                            <p>Message 3</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 4</p>
+                        </div>
+                        <div class="bulle message-recu">
+                            <p>Message 5</p>
+                        </div>
+                        <div class="bulle message-recu">
+                            <p>Message 6</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 7</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 8</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 9</p>
+                        </div>
+                        <div class="bulle message-recu">
+                            <p>Message 10</p>
+                        </div>
+                        <div class="bulle message-envoye">
+                            <p>Message 11</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="envoi-barre">
+                    <input type="text" placeholder="Nouveaux messages..." />
+                    <button type="submit">Envoyer</button>
+                </form>
+        </section>
+    </div>
+
+  </body>
+</html>
