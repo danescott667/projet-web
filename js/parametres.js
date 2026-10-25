@@ -4,11 +4,8 @@ const messageErreur = document.querySelector("#message-erreur");
 // Paragraphe où on affiche les messages  à succes de l'utilisateur
 const messageSucces = document.querySelector("#message-succes");
 
-
 // fonction pour charger la langue
 async function chargerLangue() {
-
-
   // obtenir la session
   const { data } = await client.auth.getSession();
   // récupère mon identifiant
@@ -65,10 +62,7 @@ formulaire.addEventListener("submit", async function (event) {
   // renvoie une erreur si supbase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
-  }
-
-  else {
+  } else {
     messageSucces.textContent = "Langue enregistrée";
   }
-
 });
