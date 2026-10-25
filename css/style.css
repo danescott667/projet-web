@@ -48,6 +48,7 @@ select {
   border: 1px solid #d1d5db; /* bordure fine gris clair*/
   margin-bottom: 15px;
   border-radius: 6px;
+  box-sizing: border-box;
 }
 
 /* Bouton */
@@ -128,3 +129,23 @@ header a {
 /* message de succes */
 
 #message-succes { color: #15803d; }
+
+
+/* Version mobile : écrans de 600px ou moins */
+@media (max-width: 600px) {
+
+  /* bandeau du haut moins haut */
+  .presentation {
+    padding: 15px;
+  }
+
+  /* formulaire : marge sur les côtés pour ne pas coller aux bords */
+  .connexion {
+    margin: 20px 16px;
+  }
+
+  /* liste de contacts : même chose */
+  #liste-contacts {
+    margin: 20px 16px;
+  }
+}
