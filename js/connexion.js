@@ -1,3 +1,6 @@
+redirigerSiConnecte();
+
+
 // Paragraphe où on affiche les messages d'erreur à l'utilisateur
 const messageErreur = document.querySelector("#message-erreur");
 

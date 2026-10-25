@@ -1,3 +1,7 @@
+verifierSession();
+activerDeconnexion();
+
+
 // fonction pour charger les contacts
 async function chargerContacts() {
   // obtenir la session
