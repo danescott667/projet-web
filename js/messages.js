@@ -3,20 +3,34 @@ activerDeconnexion();
 
 let monID = null;
 let contactActuel = null;
+let maLangue = null;
+
 
 async function MaSession() {
   const { data } = await client.auth.getSession();
   monID = data.session.user.id;
 
+    // récupère seulement mon profil
+  const { data: profil} = await client
+    .from("profils")
+    .select("langue")
+    .eq("id", monID)
+    .single(); // une seul le ligne pas tout le tableau
+
+  maLangue = profil.langue;
+ 
+  // temporaire pour veirification 
+  console.log(maLangue);
   afficherMessages({
     expediteur_id: monID,
     contenu: "Bonjour !",
     created_at: "2026-10-26T03:10:44.404604+00:00"
+
   });
 
   afficherMessages({
     expediteur_id: "145c8f82-3b0b-4198-b02a-10db42ffbd2d",
-    contenu: "Salut !",
+    contenu: "Je t'aime !",
     created_at: "2026-10-26T03:10:45.404604+00:00"
   });
 
@@ -73,6 +87,14 @@ function afficherMessages(message) {
     btnTrad.textContent = "Traduire";
     div.appendChild(btnTrad);
     
+    btnTrad.addEventListener("click", async function (event) {
+    const traduction = await traduire(message.contenu, maLangue);
+    texte.textContent = traduction;
+});
+
+    
+    
+
     const dateSpan = document.createElement("span");
     dateSpan.classList.add("date");
     dateSpan.textContent = formaterDate(message.created_at);
