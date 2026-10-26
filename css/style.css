@@ -60,6 +60,8 @@ button {
   border-radius: 6px;
   font-size: 1em;
   width: 100%; /* bouton aussi large que les champs*/
+  cursor: pointer;
+
 }
 
 /* Liens */
@@ -207,13 +209,15 @@ div li:hover {
 .envoi-barre button {
     width: auto;           /* annule le width:100% du bouton général */
     border-radius: 20px;
+    cursor: pointer;
 }
 
 .messages {
   box-shadow: 0 4px 12px;
   border-radius: 12px;
   overflow-y: auto;
-  max-height: 400px;
+  height: 400px;
+  padding: 10px;
 }
 
 .historique-messages {
@@ -239,4 +243,21 @@ div li:hover {
   background-color: #d5d0d0;
   align-self: flex-start;
   border-bottom-left-radius: 4px;
+}
+
+.date {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.destinataire-titre {
+  margin-bottom: 10px;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 5px;
+  background-color: #1e3a8a;
+  color: #ffffff;
+  text-align: center;
+  border: 3px groove #000000;
 }
