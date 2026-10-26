@@ -227,6 +227,9 @@ div li:hover {
 }
 
 .bulle{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 10px 16px;
   border-radius: 18px;
   max-width: 60%;
@@ -260,4 +263,14 @@ div li:hover {
   color: #ffffff;
   text-align: center;
   border: 3px groove #000000;
+}
+
+.traduire {
+  width: auto;
+  background-color: transparent;
+  color: #000000;
+  border: 1px solid #000000;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }

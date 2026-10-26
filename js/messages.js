@@ -67,6 +67,11 @@ function afficherMessages(message) {
     const texte = document.createElement("p");
     texte.textContent = message.contenu;
     div.appendChild(texte);
+
+    const btnTrad = document.createElement("button");
+    btnTrad.classList.add("traduire");
+    btnTrad.textContent = "Traduire";
+    div.appendChild(btnTrad);
     
     const dateSpan = document.createElement("span");
     dateSpan.classList.add("date");
