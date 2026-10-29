@@ -4,7 +4,8 @@ activerDeconnexion();
 let monID = null;
 let contactActuel = null;
 let maLangue = null;
-
+const formulaire = document.querySelector("#formulaire");
+const champSaisie = document.querySelector("#message");
 
 async function MaSession() {
   const { data } = await client.auth.getSession();
@@ -66,6 +67,46 @@ async function MaSession() {
     messageErreur.textContent = error.message;
     return;
   }
+
+  if (formulaire) {
+    formulaire.addEventListener("submit", async function (event) {
+        // 2. Empêcher le rechargement de la page par défaut
+        event.preventDefault();
+
+        // 3. Lire le texte et nettoyer les espaces
+        const texteMessage = champSaisie.value.trim();
+
+        // Si le champ est vide OU qu'aucun contact n'est sélectionné, on stoppe
+        if (texteMessage === "" || !contactActuel) {
+            return;
+        }
+
+        // 4. Insérer le message dans la base de données Supabase
+        const { data: nouveauMessage, error } = await client
+            .from("messagerie")
+            .insert([
+                {
+                    expediteur_id: monID,
+                    destinataire_id: contactActuel,
+                    contenu: texteMessage
+                }
+            ])
+            .select()
+            .single();
+
+        // 5. Gérer l'erreur ou finaliser l'envoi
+        if (error) {
+            console.log("Erreur lors de l'envoi du message :", error);
+            return;
+        }
+
+        // Vider le champ de saisie
+        champSaisie.value = "";
+
+        // Afficher immédiatement la bulle à l'écran
+        afficherMessages(nouveauMessage);
+    });
+}
 }
 
 function afficherMessages(message) {
