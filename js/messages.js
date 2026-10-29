@@ -18,21 +18,6 @@ async function MaSession() {
     .single(); // une seul le ligne pas tout le tableau
 
   maLangue = profil.langue;
- 
-  // temporaire pour veirification 
-  console.log(maLangue);
-  afficherMessages({
-    expediteur_id: monID,
-    contenu: "Bonjour !",
-    created_at: "2026-10-26T03:10:44.404604+00:00"
-
-  });
-
-  afficherMessages({
-    expediteur_id: "145c8f82-3b0b-4198-b02a-10db42ffbd2d",
-    contenu: "Je t'aime !",
-    created_at: "2026-10-26T03:10:45.404604+00:00"
-  });
 
   // récupère tous les profils sauf le mien
   const { data: profils, error } = await client
@@ -50,10 +35,28 @@ async function MaSession() {
   profils.forEach(profil => {
     const li = document.createElement("li");
     li.textContent = profil.pseudo;
-    li.addEventListener("click", () => {
+    li.addEventListener("click", async() => {
       contactActuel = profil.id;
       const destinataire = document.querySelector("#destinataire-titre");
       destinataire.textContent = profil.pseudo;
+
+      const historique = document.querySelector("#historique-messages")
+      historique.innerHTML = ""
+      
+    const filtre = `and(expediteur_id.eq.${monID},destinataire_id.eq.${contactActuel}),and(expediteur_id.eq.${contactActuel},destinataire_id.eq.${monID})`;
+  // récupère tous les messages entre l'expediteur et le destinataire
+     const { data: messages, error } = await client
+    .from("messagerie")
+    .select("*")
+    .or(filtre)
+    .order("created_at", { ascending: true });
+    
+    console.log(messages, error);
+
+    messages.forEach(message => {
+      afficherMessages(message);
+    });
+
     });
     liste.appendChild(li);
   });
