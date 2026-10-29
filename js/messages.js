@@ -58,15 +58,15 @@ async function MaSession() {
       afficherMessages(message);
     });
 
-    // renvoie une erreur si supbase refuse la requete
+    });
+    liste.appendChild(li);
+  });
+
+   // renvoie une erreur si supbase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
     return;
   }
-  
-    });
-    liste.appendChild(li);
-  });
 
   if (formulaire) {
     formulaire.addEventListener("submit", async function (event) {
@@ -83,7 +83,7 @@ async function MaSession() {
 
         // 4. Insérer le message dans la base de données Supabase
         const { data: nouveauMessage, error } = await client
-            .from("messagerie")
+            .from("messagerie") 
             .insert([
                 {
                     expediteur_id: monID,
@@ -158,3 +158,20 @@ function formaterDate(date) {
 }
 
 MaSession();
+
+const recherche = document.querySelector("#contact-recherche");
+
+if (recherche) {
+    recherche.addEventListener("input", function (event) {
+        const valeur = event.target.value.toLowerCase();
+        const liste = document.querySelectorAll("#liste-conversations li");
+        liste.forEach(li => {
+            const pseudo = li.textContent.toLowerCase();
+            if (pseudo.includes(valeur)) {
+                li.style.display = "";
+            } else {
+                li.style.display = "none";
+            }
+        });
+    });
+}
