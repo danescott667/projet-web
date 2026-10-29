@@ -58,15 +58,15 @@ async function MaSession() {
       afficherMessages(message);
     });
 
-    });
-    liste.appendChild(li);
-  });
-
-   // renvoie une erreur si supbase refuse la requete
+    // renvoie une erreur si supbase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
     return;
   }
+  
+    });
+    liste.appendChild(li);
+  });
 
   if (formulaire) {
     formulaire.addEventListener("submit", async function (event) {
