@@ -133,55 +133,6 @@ header a {
 #message-succes { color: #15803d; }
 
 
-/* Version mobile : écrans de 600px ou moins */
-@media (max-width: 600px) {
-
-  /* bandeau du haut moins haut */
-  .presentation {
-    padding: 15px;
-  }
-
-  /* formulaire : marge sur les côtés pour ne pas coller aux bords */
-  .connexion {
-    margin: 20px 16px;
-  }
-
-  /* liste de contacts : même chose */
-  #liste-contacts {
-    margin: 20px 16px;
-  }
-
-    /* Page conversation : la liste au-dessus, les messages en dessous */
-  .profil {
-    flex-direction: column;
-    padding: 10px;
-  }
-
-  /* La liste prend toute la largeur, la bordure passe de droite à en bas */
-  .liste-conversation {
-    width: 100%;
-    border-right: none;
-    border-bottom: 3px solid #000000;
-    padding-bottom: 10px;
-  }
-
-  /* La liste des contacts ne prend pas tout l'écran : on peut la faire défiler */
-  .liste-conversations {
-    max-height: 150px;
-    overflow-y: auto;
-  }
-
-  /* Zone des messages : 60 % de la hauteur de l'écran */
-  .messages {
-    height: 60vh;
-  }
-
-  /* Bulles plus larges sur petit écran */
-  .bulle {
-    max-width: 85%;
-  }
-
-}
 
 .liste-conversations {
   display: flex;
@@ -304,4 +255,54 @@ div li:hover {
   padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
+}
+
+/* Version mobile : écrans de 600px ou moins */
+@media (max-width: 600px) {
+
+  /* bandeau du haut moins haut */
+  .presentation {
+    padding: 15px;
+  }
+
+  /* formulaire : marge sur les côtés pour ne pas coller aux bords */
+  .connexion {
+    margin: 20px 16px;
+  }
+
+  /* liste de contacts : même chose */
+  #liste-contacts {
+    margin: 20px 16px;
+  }
+
+    /* Page conversation : la liste au-dessus, les messages en dessous */
+  .profil {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  /* La liste prend toute la largeur, la bordure passe de droite à en bas */
+  .liste-conversation {
+    width: 100%;
+    border-right: none;
+    border-bottom: 3px solid #000000;
+    padding-bottom: 10px;
+  }
+
+  /* La liste des contacts ne prend pas tout l'écran : on peut la faire défiler */
+  .liste-conversations {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  /* Zone des messages : 60 % de la hauteur de l'écran */
+  .messages {
+    height: 60vh;
+  }
+
+  /* Bulles plus larges sur petit écran */
+  .bulle {
+    max-width: 85%;
+  }
+
 }
