@@ -150,6 +150,37 @@ header a {
   #liste-contacts {
     margin: 20px 16px;
   }
+
+    /* Page conversation : la liste au-dessus, les messages en dessous */
+  .profil {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  /* La liste prend toute la largeur, la bordure passe de droite à en bas */
+  .liste-conversation {
+    width: 100%;
+    border-right: none;
+    border-bottom: 3px solid #000000;
+    padding-bottom: 10px;
+  }
+
+  /* La liste des contacts ne prend pas tout l'écran : on peut la faire défiler */
+  .liste-conversations {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  /* Zone des messages : 60 % de la hauteur de l'écran */
+  .messages {
+    height: 60vh;
+  }
+
+  /* Bulles plus larges sur petit écran */
+  .bulle {
+    max-width: 85%;
+  }
+
 }
 
 .liste-conversations {
