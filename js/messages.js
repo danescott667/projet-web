@@ -9,164 +9,163 @@ const champSaisie = document.querySelector("#message");
 const elementsContacts = {};
 
 async function MaSession() {
-  const { data } = await client.auth.getSession();
-  monID = data.session.user.id;
+    const { data } = await client.auth.getSession();
+    monID = data.session.user.id;
 
     // récupère seulement mon profil
-  const { data: profil} = await client
-    .from("profils")
-    .select("langue")
-    .eq("id", monID)
-    .single(); // une seul le ligne pas tout le tableau
+    const { data: profil } = await client
+        .from("profils")
+        .select("langue")
+        .eq("id", monID)
+        .single(); // une seul le ligne pas tout le tableau
 
-  maLangue = profil.langue;
+    maLangue = profil.langue;
 
-  // récupère tous les profils sauf le mien
-const { data: profils, error } = await client
-    .from("profils")
-    .select("id,pseudo")
-    .neq("id", monID);
+    // récupère mes contacts (table contacts) avec leur pseudo
+    const { data: contacts, error } = await client
+        .from("contacts")
+        .select("contact_id, profils(pseudo)");
 
     // renvoie une erreur si supabase refuse la requete
     if (error) {
-    console.log("Erreur chargement profils :", error.message);
-    return;
+        console.log("Erreur chargement contacts :", error.message);
+        return;
     }
 
-  // récupère la liste de la page 
-  const liste = document.querySelector("#liste-conversations");
+    // récupère la liste de la page 
+    const liste = document.querySelector("#liste-conversations");
 
- // For...of = permet de faire des "await" pour chaque profil
-  for (const profil of profils) {
-    const li = document.createElement("li");
+    // For...of = permet de faire des "await" pour chaque contact
+    for (const contact of contacts) {
+        const li = document.createElement("li");
 
-    elementsContacts[profil.id] = li;
+        elementsContacts[contact.contact_id] = li;
 
-    const pseudo = document.createElement("strong");
-    pseudo.textContent = profil.pseudo;
-    li.appendChild(pseudo);
+        const pseudo = document.createElement("strong");
+        pseudo.textContent = contact.profils.pseudo;
+        li.appendChild(pseudo);
 
-    const lastMessage = document.createElement("span");
-    lastMessage.classList.add("apercu-message");
-    li.appendChild(lastMessage);
+        const lastMessage = document.createElement("span");
+        lastMessage.classList.add("apercu-message");
+        li.appendChild(lastMessage);
 
-    // Requête pour récupérer le dernier message
-    const { data: dernierMessage } = await client
-      .from("messagerie")
-      .select("contenu")
-      .or(`and(expediteur_id.eq.${monID},destinataire_id.eq.${profil.id}),and(expediteur_id.eq.${profil.id},destinataire_id.eq.${monID})`)
-      .order("created_at", { ascending: false })
-      .limit(1);
+        // Requête pour récupérer le dernier message (avec l'expéditeur pour l'aperçu)
+        const { data: dernierMessage } = await client
+            .from("messagerie")
+            .select("contenu, expediteur_id")
+            .or(`and(expediteur_id.eq.${monID},destinataire_id.eq.${contact.contact_id}),and(expediteur_id.eq.${contact.contact_id},destinataire_id.eq.${monID})`)
+            .order("created_at", { ascending: false })
+            .limit(1);
 
-    if (dernierMessage && dernierMessage.length > 0) {
-      const msg = dernierMessage[0];
-      const prop = (msg.expediteur_id == monID);
-      mettreAJourApercu(profil.id, msg.contenu, prop);
-    } else {
-      mettreAJourApercu(profil.id, "Aucune conversation", false);
-    }
-
-    li.addEventListener("click", async() => {
-
-    li.classList.remove("non-lu");
-
-      contactActuel = profil.id;
-      const destinataire = document.querySelector("#destinataire-titre");
-      destinataire.textContent = profil.pseudo;
-
-      const historique = document.querySelector("#historique-messages")
-      historique.innerHTML = ""
-      
-    const filtre = `and(expediteur_id.eq.${monID},destinataire_id.eq.${contactActuel}),and(expediteur_id.eq.${contactActuel},destinataire_id.eq.${monID})`;
-  // récupère tous les messages entre l'expediteur et le destinataire
-     const { data: messages, error } = await client
-    .from("messagerie")
-    .select("*")
-    .or(filtre)
-    .order("created_at", { ascending: true });
-
-    if (error) {
-    console.log("Erreur lors du chargement des messages :", error);
-    return;
-    }
-
-    messages.forEach(message => {
-      afficherMessages(message);
-    });
-
-    });
-    liste.appendChild(li);
-  };
-
-  if (formulaire) {
-    formulaire.addEventListener("submit", async function (event) {
-        // 2. Empêcher le rechargement de la page par défaut
-        event.preventDefault();
-
-        // 3. Lire le texte et nettoyer les espaces
-        const texteMessage = champSaisie.value.trim();
-
-        // Si le champ est vide OU qu'aucun contact n'est sélectionné, on stoppe
-        if (texteMessage === "" || !contactActuel) {
-            return;
+        if (dernierMessage && dernierMessage.length > 0) {
+            const msg = dernierMessage[0];
+            const prop = (msg.expediteur_id == monID);
+            mettreAJourApercu(contact.contact_id, msg.contenu, prop);
+        } else {
+            mettreAJourApercu(contact.contact_id, "Aucune conversation", false);
         }
 
-        // 4. Insérer le message dans la base de données Supabase
-        const { data: nouveauMessage, error } = await client
-            .from("messagerie") 
-            .insert([
-                {
-                    expediteur_id: monID,
-                    destinataire_id: contactActuel,
-                    contenu: texteMessage
-                }
-            ])
-            .select()
-            .single();
+        li.addEventListener("click", async () => {
 
-        // 5. Gérer l'erreur ou finaliser l'envoi
-        if (error) {
-            console.log("Erreur lors de l'envoi du message :", error);
-            return;
-        }
+            li.classList.remove("non-lu");
 
-        // Vider le champ de saisie
-        champSaisie.value = "";
+            contactActuel = contact.contact_id;
+            const destinataire = document.querySelector("#destinataire-titre");
+            destinataire.textContent = contact.profils.pseudo;
 
-        // Afficher immédiatement la bulle à l'écran
-        afficherMessages(nouveauMessage);
+            const historique = document.querySelector("#historique-messages")
+            historique.innerHTML = ""
 
-        mettreAJourApercu(contactActuel, nouveauMessage.contenu, true);
-    });
+            const filtre = `and(expediteur_id.eq.${monID},destinataire_id.eq.${contactActuel}),and(expediteur_id.eq.${contactActuel},destinataire_id.eq.${monID})`;
+            // récupère tous les messages entre l'expediteur et le destinataire
+            const { data: messages, error } = await client
+                .from("messagerie")
+                .select("*")
+                .or(filtre)
+                .order("created_at", { ascending: true });
+
+            if (error) {
+                console.log("Erreur lors du chargement des messages :", error);
+                return;
+            }
+
+            messages.forEach(message => {
+                afficherMessages(message);
+            });
+
+        });
+        liste.appendChild(li);
+    };
+
+    if (formulaire) {
+        formulaire.addEventListener("submit", async function (event) {
+            // 2. Empêcher le rechargement de la page par défaut
+            event.preventDefault();
+
+            // 3. Lire le texte et nettoyer les espaces
+            const texteMessage = champSaisie.value.trim();
+
+            // Si le champ est vide OU qu'aucun contact n'est sélectionné, on stoppe
+            if (texteMessage === "" || !contactActuel) {
+                return;
+            }
+
+            // 4. Insérer le message dans la base de données Supabase
+            const { data: nouveauMessage, error } = await client
+                .from("messagerie")
+                .insert([
+                    {
+                        expediteur_id: monID,
+                        destinataire_id: contactActuel,
+                        contenu: texteMessage
+                    }
+                ])
+                .select()
+                .single();
+
+            // 5. Gérer l'erreur ou finaliser l'envoi
+            if (error) {
+                console.log("Erreur lors de l'envoi du message :", error);
+                return;
+            }
+
+            // Vider le champ de saisie
+            champSaisie.value = "";
+
+            // Afficher immédiatement la bulle à l'écran
+            afficherMessages(nouveauMessage);
+
+            mettreAJourApercu(contactActuel, nouveauMessage.contenu, true);
+        });
     }
 
     client
-    .channel("message-canal")
-    .on(
-        "postgres_changes",
-        {
-            event: "INSERT",
-            schema: "public",
-            table: "messagerie",
-            filter: `destinataire_id=eq.${monID}`,
-        },
-        (payload) => {
-            const messageRecu = payload.new;
+        .channel("message-canal")
+        .on(
+            "postgres_changes",
+            {
+                event: "INSERT",
+                schema: "public",
+                table: "messagerie",
+                filter: `destinataire_id=eq.${monID}`,
+            },
+            (payload) => {
+                const messageRecu = payload.new;
 
-            mettreAJourApercu(messageRecu.expediteur_id, messageRecu.contenu, false);
-            
-            if (contactActuel === messageRecu.expediteur_id) {
-                afficherMessages(messageRecu);
-            } else {
-                // Marquer le contact comme non lu
-                const contactconcerne = elementsContacts[messageRecu.expediteur_id];
-                if (contactconcerne) {
-                    contactconcerne.classList.add("non-lu");
+                mettreAJourApercu(messageRecu.expediteur_id, messageRecu.contenu, false);
+
+                if (contactActuel === messageRecu.expediteur_id) {
+                    afficherMessages(messageRecu);
+                } else {
+                    // Marquer le contact comme non lu
+                    const contactconcerne = elementsContacts[messageRecu.expediteur_id];
+                    if (contactconcerne) {
+                        contactconcerne.classList.add("non-lu");
+                    }
                 }
             }
-        }
-    )
-    .subscribe();
+        )
+        .subscribe();
 }
 
 function afficherMessages(message) {
@@ -190,11 +189,11 @@ function afficherMessages(message) {
     btnTrad.classList.add("traduire");
     btnTrad.textContent = "Traduire";
     div.appendChild(btnTrad);
-    
+
     btnTrad.addEventListener("click", async function (event) {
-    const traduction = await traduire(message.contenu, maLangue);
-    texte.textContent = traduction;
-});
+        const traduction = await traduire(message.contenu, maLangue);
+        texte.textContent = traduction;
+    });
 
     const dateSpan = document.createElement("span");
     dateSpan.classList.add("date");
@@ -217,19 +216,19 @@ function formaterDate(date) {
 function mettreAJourApercu(idContact, messagestext, moi) {
     const ContactConcerne = elementsContacts[idContact];
 
-        if (ContactConcerne) {
-            const apercuMessage = ContactConcerne.querySelector(".apercu-message");
-            const pseudo = ContactConcerne.querySelector("strong");
-            if (apercuMessage) {
-                if (moi){
-                    apercuMessage.textContent = "Vous: " + messagestext;
-                }else{
-                    apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
-                }
+    if (ContactConcerne) {
+        const apercuMessage = ContactConcerne.querySelector(".apercu-message");
+        const pseudo = ContactConcerne.querySelector("strong");
+        if (apercuMessage) {
+            if (moi) {
+                apercuMessage.textContent = "Vous: " + messagestext;
+            } else {
+                apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
             }
+        }
         const li = document.querySelector("#liste-conversations");
         li.prepend(ContactConcerne);
-        }
+    }
 }
 
 MaSession();
