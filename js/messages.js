@@ -21,21 +21,47 @@ async function MaSession() {
   maLangue = profil.langue;
 
   // récupère tous les profils sauf le mien
-  const { data: profils, error } = await client
+const { data: profils, error } = await client
     .from("profils")
     .select("id,pseudo")
     .neq("id", monID);
 
-  // temporaire, pour tester
-  console.log(profils, error);
+    // renvoie une erreur si supabase refuse la requete
+    if (error) {
+    messageErreur.textContent = error.message;
+    return;
+  }
 
   // récupère la liste de la page 
   const liste = document.querySelector("#liste-conversations");
 
-  // pour chaque profil : créer une ligne, y mettre le pseudo, l'ajouter à la liste
-  profils.forEach(profil => {
+ // For...of = permet de faire des "await" pour chaque profil
+  for (const profil of profils) {
     const li = document.createElement("li");
-    li.textContent = profil.pseudo;
+
+    const pseudo = document.createElement("strong");
+    pseudo.textContent = profil.pseudo;
+    li.appendChild(pseudo);
+
+    const lastMessage = document.createElement("span");
+    lastMessage.classList.add("apercu-message");
+    lastMessage.textContent = "Chargement...";
+    li.appendChild(lastMessage);
+
+    // Requête pour récupérer le dernier message
+    const { data: dernierMessage } = await client
+      .from("messagerie")
+      .select("contenu")
+      .or(`and(expediteur_id.eq.${monID},destinataire_id.eq.${profil.id}),and(expediteur_id.eq.${profil.id},destinataire_id.eq.${monID})`)
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    if (dernierMessage && dernierMessage.length > 0) {
+      lastMessage.textContent = dernierMessage[0].contenu;
+    } else {
+      lastMessage.textContent = "Aucune discussion";
+    }
+
     li.addEventListener("click", async() => {
       contactActuel = profil.id;
       const destinataire = document.querySelector("#destinataire-titre");
@@ -51,7 +77,7 @@ async function MaSession() {
     .select("*")
     .or(filtre)
     .order("created_at", { ascending: true });
-    
+
     console.log(messages, error);
 
     messages.forEach(message => {
@@ -60,13 +86,7 @@ async function MaSession() {
 
     });
     liste.appendChild(li);
-  });
-
-   // renvoie une erreur si supbase refuse la requete
-  if (error) {
-    messageErreur.textContent = error.message;
-    return;
-  }
+  };
 
   if (formulaire) {
     formulaire.addEventListener("submit", async function (event) {
@@ -163,11 +183,11 @@ const recherche = document.querySelector("#contact-recherche");
 
 if (recherche) {
     recherche.addEventListener("input", function (event) {
-        const valeur = event.target.value.toLowerCase();
-        const liste = document.querySelectorAll("#liste-conversations li");
-        liste.forEach(li => {
+        const contact = event.target.value.toLowerCase();
+        const liste_contact = document.querySelectorAll("#liste-conversations li");
+        liste_contact.forEach(li => {
             const pseudo = li.textContent.toLowerCase();
-            if (pseudo.includes(valeur)) {
+            if (pseudo.includes(contact)) {
                 li.style.display = "";
             } else {
                 li.style.display = "none";
