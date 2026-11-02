@@ -227,6 +227,8 @@ function mettreAJourApercu(idContact, messagestext, moi) {
                     apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
                 }
             }
+        const li = document.querySelector("#liste-conversations");
+        li.prepend(ContactConcerne);
         }
 }
 
