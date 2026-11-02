@@ -1,35 +1,44 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css" />
-    <title>Contacts</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/sessions.js" defer></script>
-    <script src="js/contacts.js" defer></script>
-  </head>
 
-  <body>
-    <!--En-tête commun aux pages connectées : logo, menu, déconnexion -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Contacts</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/sessions.js" defer></script>
+  <script src="js/contacts.js" defer></script>
+</head>
 
-    <header class="presentation">
-      <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
-      <p>Vos conversations, simplement.</p>
-      <nav>
-        <ul>
-          <li><a href="conversation.html">Conversations</a></li>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="parametres.html">Paramètres</a></li>
-        </ul>
-      </nav>
-      <button type="button" id="deconnexion">Se déconnecter</button>
-    </header>
-    <!-- Liste de contacts (Dane) -->
-    <main>
-      <h1>Mes contacts</h1>
-      <ul id="liste-contacts"></ul>
-    </main>
-  </body>
+<body>
+  <!--En-tête commun aux pages connectées : logo, menu, déconnexion -->
+
+  <header class="presentation">
+    <img src="images/tchatlogo.png" alt="Logo de Tchat'" />
+    <p>Vos conversations, simplement.</p>
+    <nav>
+      <ul>
+        <li><a href="conversation.html">Conversations</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="parametres.html">Paramètres</a></li>
+      </ul>
+    </nav>
+    <button type="button" id="deconnexion">Se déconnecter</button>
+  </header>
+  <!-- Liste de contacts (Dane) -->
+  <main>
+    <h1>Mes contacts</h1>
+    <!-- Ajout d'un contact par son pseudo (Dane) -->
+    <form id="form-ajout">
+      <input type="text" id="pseudo-contact" placeholder="Pseudo du contact" required>
+      <button type="submit">Ajouter</button>
+    </form>
+    <p id="messageErreur" role="alert"></p>
+    <ul id="liste-contacts"></ul>
+  </main>
+
+</body>
+
 </html>
