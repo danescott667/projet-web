@@ -6,6 +6,7 @@ let contactActuel = null;
 let maLangue = null;
 const formulaire = document.querySelector("#formulaire");
 const champSaisie = document.querySelector("#message");
+const elementsContacts = {};
 
 async function MaSession() {
   const { data } = await client.auth.getSession();
@@ -28,9 +29,9 @@ const { data: profils, error } = await client
 
     // renvoie une erreur si supabase refuse la requete
     if (error) {
-    messageErreur.textContent = error.message;
+    console.log("Erreur chargement profils :", error.message);
     return;
-  }
+    }
 
   // récupère la liste de la page 
   const liste = document.querySelector("#liste-conversations");
@@ -39,13 +40,14 @@ const { data: profils, error } = await client
   for (const profil of profils) {
     const li = document.createElement("li");
 
+    elementsContacts[profil.id] = li;
+
     const pseudo = document.createElement("strong");
     pseudo.textContent = profil.pseudo;
     li.appendChild(pseudo);
 
     const lastMessage = document.createElement("span");
     lastMessage.classList.add("apercu-message");
-    lastMessage.textContent = "Chargement...";
     li.appendChild(lastMessage);
 
     // Requête pour récupérer le dernier message
@@ -57,12 +59,17 @@ const { data: profils, error } = await client
       .limit(1);
 
     if (dernierMessage && dernierMessage.length > 0) {
-      lastMessage.textContent = dernierMessage[0].contenu;
+      const msg = dernierMessage[0];
+      const prop = (msg.expediteur_id == monID);
+      mettreAJourApercu(profil.id, msg.contenu, prop);
     } else {
-      lastMessage.textContent = "Aucune discussion";
+      mettreAJourApercu(profil.id, "Aucune conversation", false);
     }
 
     li.addEventListener("click", async() => {
+
+    li.classList.remove("non-lu");
+
       contactActuel = profil.id;
       const destinataire = document.querySelector("#destinataire-titre");
       destinataire.textContent = profil.pseudo;
@@ -78,7 +85,10 @@ const { data: profils, error } = await client
     .or(filtre)
     .order("created_at", { ascending: true });
 
-    console.log(messages, error);
+    if (error) {
+    console.log("Erreur lors du chargement des messages :", error);
+    return;
+    }
 
     messages.forEach(message => {
       afficherMessages(message);
@@ -125,8 +135,38 @@ const { data: profils, error } = await client
 
         // Afficher immédiatement la bulle à l'écran
         afficherMessages(nouveauMessage);
+
+        mettreAJourApercu(contactActuel, nouveauMessage.contenu, true);
     });
-}
+    }
+
+    client
+    .channel("message-canal")
+    .on(
+        "postgres_changes",
+        {
+            event: "INSERT",
+            schema: "public",
+            table: "messagerie",
+            filter: `destinataire_id=eq.${monID}`,
+        },
+        (payload) => {
+            const messageRecu = payload.new;
+
+            mettreAJourApercu(messageRecu.expediteur_id, messageRecu.contenu, false);
+            
+            if (contactActuel === messageRecu.expediteur_id) {
+                afficherMessages(messageRecu);
+            } else {
+                // Marquer le contact comme non lu
+                const contactconcerne = elementsContacts[messageRecu.expediteur_id];
+                if (contactconcerne) {
+                    contactconcerne.classList.add("non-lu");
+                }
+            }
+        }
+    )
+    .subscribe();
 }
 
 function afficherMessages(message) {
@@ -156,9 +196,6 @@ function afficherMessages(message) {
     texte.textContent = traduction;
 });
 
-    
-    
-
     const dateSpan = document.createElement("span");
     dateSpan.classList.add("date");
     dateSpan.textContent = formaterDate(message.created_at);
@@ -177,6 +214,22 @@ function formaterDate(date) {
     return dateObj.toLocaleDateString("fr-CA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+function mettreAJourApercu(idContact, messagestext, moi) {
+    const ContactConcerne = elementsContacts[idContact];
+
+        if (ContactConcerne) {
+            const apercuMessage = ContactConcerne.querySelector(".apercu-message");
+            const pseudo = ContactConcerne.querySelector("strong");
+            if (apercuMessage) {
+                if (moi){
+                    apercuMessage.textContent = "Vous: " + messagestext;
+                }else{
+                    apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
+                }
+            }
+        }
+}
+
 MaSession();
 
 const recherche = document.querySelector("#contact-recherche");
@@ -186,7 +239,8 @@ if (recherche) {
         const contact = event.target.value.toLowerCase();
         const liste_contact = document.querySelectorAll("#liste-conversations li");
         liste_contact.forEach(li => {
-            const pseudo = li.textContent.toLowerCase();
+            const elementPseudo = li.querySelector("strong");
+            const pseudo = elementPseudo ? elementPseudo.textContent.toLowerCase() : "";
             if (pseudo.includes(contact)) {
                 li.style.display = "";
             } else {
@@ -195,3 +249,5 @@ if (recherche) {
         });
     });
 }
+
+

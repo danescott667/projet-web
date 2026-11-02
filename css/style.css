@@ -183,6 +183,14 @@ div li:hover {
   width: 300px;
   border-right: 3px solid #000000;
 }
+
+#liste-conversations li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 .recherche {
   padding: 2px;
   width: 40%;
@@ -280,3 +288,9 @@ div li:hover {
   color: #666;
   margin-top: 5px;
 }
+
+li.non-lu .apercu-message {
+  font-weight: bold;
+  color: #000000;
+}
+
