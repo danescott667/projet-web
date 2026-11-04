@@ -52,7 +52,7 @@ const { data: salons, error } = await client
     // Requête pour récupérer le dernier message
     const { data: dernierMessage } = await client
       .from("messagerie")
-      .select("contenu")
+      .select("contenu, expediteur_id, profils(pseudo)")
       .eq("Salon_id", salon.id)
       .order("created_at", { ascending: false })
       .limit(1);
@@ -60,9 +60,10 @@ const { data: salons, error } = await client
     if (dernierMessage && dernierMessage.length > 0) {
       const msg = dernierMessage[0];
       const prop = (msg.expediteur_id == monID);
-      mettreAJourApercu(salon.id, msg.contenu, prop);
+      const pseudoAuteur = msg.profils ? msg.profils.pseudo : "";
+      mettreAJourApercu(salon.id, msg.contenu, pseudoAuteur, prop);
     } else {
-      mettreAJourApercu(salon.id, "Aucune conversation", false);
+      mettreAJourApercu(salon.id, "Aucune conversation", pseudoAuteur, false);
     }
 
         li.addEventListener("click", async () => {
@@ -78,7 +79,7 @@ const { data: salons, error } = await client
   // récupère tous les messages de ce salon
      const { data: messages, error } = await client
     .from("messagerie")
-    .select("*")
+    .select("*, profils(pseudo)")
     .eq("Salon_id", salon.id)
     .order("created_at", { ascending: true });
 
@@ -130,7 +131,7 @@ const { data: salons, error } = await client
             // Vider le champ de saisie
             champSaisie.value = "";
 
-            mettreAJourApercu(salonActuel, nouveauMessage.contenu, true);
+            mettreAJourApercu(salonActuel, nouveauMessage.contenu, "Vous",true);
     });
     }
 
@@ -143,12 +144,23 @@ const { data: salons, error } = await client
             schema: "public",
             table: "messagerie",
         },
-        (payload) => {
+        async (payload) => {
             const messageRecu = payload.new;
-            const estMoi = (messageRecu.expediteur_id === monID);
-            mettreAJourApercu(messageRecu.Salon_id, messageRecu.contenu, estMoi);
+            const estMoi = messageRecu.expediteur_id === monID;
+            
+            // Récupérer le pseudo de l'expéditeur
+            const { data: p } = await client
+                .from("profils")
+                .select("pseudo")
+                .eq("id", messageRecu.expediteur_id)
+                .single();
+            
+            const pseudo = p ? p.pseudo : "Inconnu";
+              
+            mettreAJourApercu(messageRecu.Salon_id, messageRecu.contenu, pseudo, estMoi);
             
             if (salonActuel === messageRecu.Salon_id) {
+                messageRecu.profils = { pseudo: pseudo };
                 afficherMessages(messageRecu);
             } else {
                 // Marquer le contact comme non lu
@@ -176,6 +188,10 @@ function afficherMessages(message) {
     } else {
         div.classList.add("message-recu");
     }
+
+    const pseudo = document.createElement("strong");
+    pseudo.textContent = message.expediteur_id === monID ? "Vous" : message.profils.pseudo;
+    div.appendChild(pseudo);
 
     const texte = document.createElement("p");
     texte.textContent = message.contenu;
@@ -209,16 +225,17 @@ function formaterDate(date) {
     return dateObj.toLocaleDateString("fr-CA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
-function mettreAJourApercu(idSalon, messagestext, moi) {
+function mettreAJourApercu(idSalon, messagestext, pseudoText, moi) {
     const salon_Concerne = elementsSalons[idSalon];
     if (salon_Concerne) {
         const apercuMessage = salon_Concerne.querySelector(".apercu-message");
         const pseudo = salon_Concerne.querySelector("strong");
+
         if (apercuMessage) {
             if (moi){
                 apercuMessage.textContent = "Vous: " + messagestext;
             }else{
-                apercuMessage.textContent = messagestext;
+                apercuMessage.textContent = pseudoText + ": " + messagestext;
             }
         }
         const li = document.querySelector("#liste-conversations");
