@@ -6,7 +6,7 @@ let contactActuel = null;
 let maLangue = null;
 const formulaire = document.querySelector("#formulaire");
 const champSaisie = document.querySelector("#message");
-const elementsContacts = {};
+const elementsSalons = {};
 
 async function MaSession() {
   const { data } = await client.auth.getSession();
@@ -21,15 +21,14 @@ async function MaSession() {
 
   maLangue = profil.langue;
 
-  // récupère tous les profils sauf le mien
-const { data: profils, error } = await client
-    .from("profils")
-    .select("id,pseudo")
-    .neq("id", monID);
+  // récupère tous les salons
+const { data: salons, error } = await client
+    .from("salons")
+    .select("id,nom")
 
     // renvoie une erreur si supabase refuse la requete
     if (error) {
-    console.log("Erreur chargement profils :", error.message);
+    console.log("Erreur chargement salons :", error.message);
     return;
     }
 
@@ -37,14 +36,14 @@ const { data: profils, error } = await client
   const liste = document.querySelector("#liste-conversations");
 
  // For...of = permet de faire des "await" pour chaque profil
-  for (const profil of profils) {
+  for (const salon of salons) {
     const li = document.createElement("li");
 
-    elementsContacts[profil.id] = li;
+    elementsSalons[salon.id] = li;
 
-    const pseudo = document.createElement("strong");
-    pseudo.textContent = profil.pseudo;
-    li.appendChild(pseudo);
+    const nom_salon = document.createElement("strong");
+    nom_salon.textContent = salon.nom;
+    li.appendChild(nom_salon);
 
     const lastMessage = document.createElement("span");
     lastMessage.classList.add("apercu-message");
@@ -53,36 +52,35 @@ const { data: profils, error } = await client
     // Requête pour récupérer le dernier message
     const { data: dernierMessage } = await client
       .from("messagerie")
-      .select("contenu")
-      .or(`and(expediteur_id.eq.${monID},destinataire_id.eq.${profil.id}),and(expediteur_id.eq.${profil.id},destinataire_id.eq.${monID})`)
+      .select("contenu, expediteur_id")
+      .eq("Salon_id", salon.id)
       .order("created_at", { ascending: false })
       .limit(1);
 
     if (dernierMessage && dernierMessage.length > 0) {
       const msg = dernierMessage[0];
       const prop = (msg.expediteur_id == monID);
-      mettreAJourApercu(profil.id, msg.contenu, prop);
+      mettreAJourApercu(salon.id, msg.contenu, prop);
     } else {
-      mettreAJourApercu(profil.id, "Aucune conversation", false);
+      mettreAJourApercu(salon.id, "Aucune conversation", false);
     }
 
     li.addEventListener("click", async() => {
 
     li.classList.remove("non-lu");
 
-      contactActuel = profil.id;
-      const destinataire = document.querySelector("#destinataire-titre");
-      destinataire.textContent = profil.pseudo;
+      salonActuel = salon.id;
+      const destinataire = document.querySelector("#salon-titre");
+      destinataire.textContent = salon.nom;
 
       const historique = document.querySelector("#historique-messages")
       historique.innerHTML = ""
       
-    const filtre = `and(expediteur_id.eq.${monID},destinataire_id.eq.${contactActuel}),and(expediteur_id.eq.${contactActuel},destinataire_id.eq.${monID})`;
-  // récupère tous les messages entre l'expediteur et le destinataire
+  // récupère tous les messages de ce salon
      const { data: messages, error } = await client
     .from("messagerie")
     .select("*")
-    .or(filtre)
+    .eq("Salon_id", salon.id)
     .order("created_at", { ascending: true });
 
     if (error) {
@@ -107,7 +105,7 @@ const { data: profils, error } = await client
         const texteMessage = champSaisie.value.trim();
 
         // Si le champ est vide OU qu'aucun contact n'est sélectionné, on stoppe
-        if (texteMessage === "" || !contactActuel) {
+        if (texteMessage === "" || !salonActuel) {
             return;
         }
 
@@ -117,7 +115,7 @@ const { data: profils, error } = await client
             .insert([
                 {
                     expediteur_id: monID,
-                    destinataire_id: contactActuel,
+                    Salon_id: salonActuel,
                     contenu: texteMessage
                 }
             ])
@@ -133,10 +131,7 @@ const { data: profils, error } = await client
         // Vider le champ de saisie
         champSaisie.value = "";
 
-        // Afficher immédiatement la bulle à l'écran
-        afficherMessages(nouveauMessage);
-
-        mettreAJourApercu(contactActuel, nouveauMessage.contenu, true);
+        mettreAJourApercu(salonActuel, nouveauMessage.contenu, true);
     });
     }
 
@@ -148,20 +143,22 @@ const { data: profils, error } = await client
             event: "INSERT",
             schema: "public",
             table: "messagerie",
-            filter: `destinataire_id=eq.${monID}`,
         },
         (payload) => {
             const messageRecu = payload.new;
+            const estMoi = (messageRecu.expediteur_id == monID);
 
-            mettreAJourApercu(messageRecu.expediteur_id, messageRecu.contenu, false);
+            mettreAJourApercu(messageRecu.Salon_id, messageRecu.contenu, estMoi);
             
-            if (contactActuel === messageRecu.expediteur_id) {
+            if (salonActuel === messageRecu.Salon_id) {
                 afficherMessages(messageRecu);
             } else {
                 // Marquer le contact comme non lu
-                const contactconcerne = elementsContacts[messageRecu.expediteur_id];
-                if (contactconcerne) {
-                    contactconcerne.classList.add("non-lu");
+                if (!estMoi) {
+                    const salonconcerne = elementsSalons[messageRecu.Salon_id];
+                    if (salonconcerne) {
+                        salonconcerne.classList.add("non-lu");
+                    }
                 }
             }
         }
@@ -214,36 +211,35 @@ function formaterDate(date) {
     return dateObj.toLocaleDateString("fr-CA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
-function mettreAJourApercu(idContact, messagestext, moi) {
-    const ContactConcerne = elementsContacts[idContact];
+function mettreAJourApercu(idSalon, messagestext, moi) {
+    const salon_Concerne = elementsSalons[idSalon];
 
-        if (ContactConcerne) {
-            const apercuMessage = ContactConcerne.querySelector(".apercu-message");
-            const pseudo = ContactConcerne.querySelector("strong");
+        if (salon_Concerne) {
+            const apercuMessage = salon_Concerne.querySelector(".apercu-message");
             if (apercuMessage) {
                 if (moi){
                     apercuMessage.textContent = "Vous: " + messagestext;
                 }else{
-                    apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
+                    apercuMessage.textContent = messagestext;
                 }
             }
         const li = document.querySelector("#liste-conversations");
-        li.prepend(ContactConcerne);
+        li.prepend(salon_Concerne);
         }
 }
 
 MaSession();
 
-const recherche = document.querySelector("#contact-recherche");
+const recherche = document.querySelector("#salon-recherche");
 
 if (recherche) {
     recherche.addEventListener("input", function (event) {
-        const contact = event.target.value.toLowerCase();
-        const liste_contact = document.querySelectorAll("#liste-conversations li");
-        liste_contact.forEach(li => {
+        const salon = event.target.value.toLowerCase();
+        const liste_salon = document.querySelectorAll("#liste-conversations li");
+        liste_salon.forEach(li => {
             const elementPseudo = li.querySelector("strong");
             const pseudo = elementPseudo ? elementPseudo.textContent.toLowerCase() : "";
-            if (pseudo.includes(contact)) {
+            if (pseudo.includes(salon)) {
                 li.style.display = "";
             } else {
                 li.style.display = "none";
