@@ -9,103 +9,105 @@ const champSaisie = document.querySelector("#message");
 const elementsSalons = {};
 
 async function MaSession() {
-  const { data } = await client.auth.getSession();
-  monID = data.session.user.id;
+    const { data } = await client.auth.getSession();
+    monID = data.session.user.id;
 
     // récupère seulement mon profil
-  const { data: profil} = await client
+    const { data: profil } = await client
+        .from("profils")
+        .select("langue")
+        .eq("id", monID)
+        .single(); // une seul le ligne pas tout le tableau
+
+    maLangue = profil.langue;
+
+  // récupère tous les profils sauf le mien
+const { data: profils, error } = await client
     .from("profils")
-    .select("langue")
-    .eq("id", monID)
-    .single(); // une seul le ligne pas tout le tableau
-
-  maLangue = profil.langue;
-
-  // récupère tous les salons
-const { data: salons, error } = await client
-    .from("salons")
-    .select("id,nom")
+    .select("id,pseudo")
+    .neq("id", monID);
 
     // renvoie une erreur si supabase refuse la requete
     if (error) {
-    console.log("Erreur chargement salons :", error.message);
+    console.log("Erreur chargement profils :", error.message);
     return;
     }
 
-  // récupère la liste de la page 
-  const liste = document.querySelector("#liste-conversations");
+    // récupère la liste de la page 
+    const liste = document.querySelector("#liste-conversations");
 
  // For...of = permet de faire des "await" pour chaque profil
-  for (const salon of salons) {
+  for (const profil of profils) {
     const li = document.createElement("li");
 
-    elementsSalons[salon.id] = li;
+    elementsContacts[profil.id] = li;
 
-    const nom_salon = document.createElement("strong");
-    nom_salon.textContent = salon.nom;
-    li.appendChild(nom_salon);
+    const pseudo = document.createElement("strong");
+    pseudo.textContent = profil.pseudo;
+    li.appendChild(pseudo);
 
-    const lastMessage = document.createElement("span");
-    lastMessage.classList.add("apercu-message");
-    li.appendChild(lastMessage);
+        const lastMessage = document.createElement("span");
+        lastMessage.classList.add("apercu-message");
+        li.appendChild(lastMessage);
 
     // Requête pour récupérer le dernier message
     const { data: dernierMessage } = await client
       .from("messagerie")
-      .select("contenu, expediteur_id")
-      .eq("Salon_id", salon.id)
+      .select("contenu")
+      .or(`and(expediteur_id.eq.${monID},destinataire_id.eq.${profil.id}),and(expediteur_id.eq.${profil.id},destinataire_id.eq.${monID})`)
       .order("created_at", { ascending: false })
       .limit(1);
 
     if (dernierMessage && dernierMessage.length > 0) {
       const msg = dernierMessage[0];
       const prop = (msg.expediteur_id == monID);
-      mettreAJourApercu(salon.id, msg.contenu, prop);
+      mettreAJourApercu(profil.id, msg.contenu, prop);
     } else {
-      mettreAJourApercu(salon.id, "Aucune conversation", false);
+      mettreAJourApercu(profil.id, "Aucune conversation", false);
     }
 
-    li.addEventListener("click", async() => {
+        li.addEventListener("click", async () => {
 
-    li.classList.remove("non-lu");
+            li.classList.remove("non-lu");
 
-      salonActuel = salon.id;
-      const destinataire = document.querySelector("#salon-titre");
-      destinataire.textContent = salon.nom;
+      contactActuel = profil.id;
+      const destinataire = document.querySelector("#destinataire-titre");
+      destinataire.textContent = profil.pseudo;
 
       const historique = document.querySelector("#historique-messages")
       historique.innerHTML = ""
       
-  // récupère tous les messages de ce salon
+    const filtre = `and(expediteur_id.eq.${monID},destinataire_id.eq.${contactActuel}),and(expediteur_id.eq.${contactActuel},destinataire_id.eq.${monID})`;
+  // récupère tous les messages entre l'expediteur et le destinataire
      const { data: messages, error } = await client
     .from("messagerie")
     .select("*")
-    .eq("Salon_id", salon.id)
+    .or(filtre)
     .order("created_at", { ascending: true });
 
-    if (error) {
-    console.log("Erreur lors du chargement des messages :", error);
-    return;
-    }
+            if (error) {
+                console.log("Erreur lors du chargement des messages :", error);
+                return;
+            }
 
-    messages.forEach(message => {
-      afficherMessages(message);
-    });
+            messages.forEach(message => {
+                afficherMessages(message);
+            });
 
-    });
-    liste.appendChild(li);
-  };
+        });
+        liste.appendChild(li);
+    };
 
-  if (formulaire) {
-    formulaire.addEventListener("submit", async function (event) {
-        // 2. Empêcher le rechargement de la page par défaut
-        event.preventDefault();
+    if (formulaire) {
+        formulaire.addEventListener("submit", async function (event) {
+            // 2. Empêcher le rechargement de la page par défaut
+            event.preventDefault();
 
-        // 3. Lire le texte et nettoyer les espaces
-        const texteMessage = champSaisie.value.trim();
+            // 3. Lire le texte et nettoyer les espaces
+            const texteMessage = champSaisie.value.trim();
 
         // Si le champ est vide OU qu'aucun contact n'est sélectionné, on stoppe
-        if (texteMessage === "" || !salonActuel) {
+        if (texteMessage === "" || !contactActuel) {
             return;
         }
 
@@ -115,23 +117,26 @@ const { data: salons, error } = await client
             .insert([
                 {
                     expediteur_id: monID,
-                    Salon_id: salonActuel,
+                    destinataire_id: contactActuel,
                     contenu: texteMessage
                 }
             ])
             .select()
             .single();
 
-        // 5. Gérer l'erreur ou finaliser l'envoi
-        if (error) {
-            console.log("Erreur lors de l'envoi du message :", error);
-            return;
-        }
+            // 5. Gérer l'erreur ou finaliser l'envoi
+            if (error) {
+                console.log("Erreur lors de l'envoi du message :", error);
+                return;
+            }
 
-        // Vider le champ de saisie
-        champSaisie.value = "";
+            // Vider le champ de saisie
+            champSaisie.value = "";
 
-        mettreAJourApercu(salonActuel, nouveauMessage.contenu, true);
+        // Afficher immédiatement la bulle à l'écran
+        afficherMessages(nouveauMessage);
+
+        mettreAJourApercu(contactActuel, nouveauMessage.contenu, true);
     });
     }
 
@@ -143,22 +148,20 @@ const { data: salons, error } = await client
             event: "INSERT",
             schema: "public",
             table: "messagerie",
+            filter: `destinataire_id=eq.${monID}`,
         },
         (payload) => {
             const messageRecu = payload.new;
-            const estMoi = (messageRecu.expediteur_id == monID);
 
-            mettreAJourApercu(messageRecu.Salon_id, messageRecu.contenu, estMoi);
+            mettreAJourApercu(messageRecu.expediteur_id, messageRecu.contenu, false);
             
-            if (salonActuel === messageRecu.Salon_id) {
+            if (contactActuel === messageRecu.expediteur_id) {
                 afficherMessages(messageRecu);
             } else {
                 // Marquer le contact comme non lu
-                if (!estMoi) {
-                    const salonconcerne = elementsSalons[messageRecu.Salon_id];
-                    if (salonconcerne) {
-                        salonconcerne.classList.add("non-lu");
-                    }
+                const contactconcerne = elementsContacts[messageRecu.expediteur_id];
+                if (contactconcerne) {
+                    contactconcerne.classList.add("non-lu");
                 }
             }
         }
@@ -187,11 +190,11 @@ function afficherMessages(message) {
     btnTrad.classList.add("traduire");
     btnTrad.textContent = "Traduire";
     div.appendChild(btnTrad);
-    
+
     btnTrad.addEventListener("click", async function (event) {
-    const traduction = await traduire(message.contenu, maLangue);
-    texte.textContent = traduction;
-});
+        const traduction = await traduire(message.contenu, maLangue);
+        texte.textContent = traduction;
+    });
 
     const dateSpan = document.createElement("span");
     dateSpan.classList.add("date");
@@ -214,17 +217,18 @@ function formaterDate(date) {
 function mettreAJourApercu(idSalon, messagestext, moi) {
     const salon_Concerne = elementsSalons[idSalon];
 
-        if (salon_Concerne) {
-            const apercuMessage = salon_Concerne.querySelector(".apercu-message");
+        if (ContactConcerne) {
+            const apercuMessage = ContactConcerne.querySelector(".apercu-message");
+            const pseudo = ContactConcerne.querySelector("strong");
             if (apercuMessage) {
                 if (moi){
                     apercuMessage.textContent = "Vous: " + messagestext;
                 }else{
-                    apercuMessage.textContent = messagestext;
+                    apercuMessage.textContent = pseudo.textContent + ": " + messagestext;
                 }
             }
         const li = document.querySelector("#liste-conversations");
-        li.prepend(salon_Concerne);
+        li.prepend(ContactConcerne);
         }
 }
 
