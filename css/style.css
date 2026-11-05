@@ -105,6 +105,11 @@ header a {
   color: #1e3a8a;
 }
 
+#deconnexion:hover {
+  transform: scale(1.05);
+  transition: all 0.2s;
+}
+
 
 /* Liste de contacts */
 
@@ -191,15 +196,29 @@ div li:hover {
   margin-bottom: 10px;
 }
 
+#liste-conversations li:hover {
+  transform: scale(1.05);
+  transition: all 0.2s;
+}
+
 #liste-conversations li strong {
   font-size: 20px;
 
+}
+
+.liste-conversation input {
+  border-radius: 20px;
 }
 
 .recherche {
   padding: 2px;
   width: 40%;
   cursor: pointer;
+}
+
+.recherche:hover {
+  transform: scale(1.05);
+  transition: all 0.2s;
 }
 
 .message-container {
@@ -223,6 +242,11 @@ div li:hover {
     width: auto;           /* annule le width:100% du bouton général */
     border-radius: 20px;
     cursor: pointer;
+}
+
+.envoi-barre button:hover {
+  transform: scale(1.05);
+  transition: all 0.2s;
 }
 
 .messages {
@@ -300,5 +324,26 @@ div li:hover {
 li.non-lu .apercu-message {
   font-weight: bold;
   color: #000000;
+}
+
+.creer-salon {
+  display: flex;
+  justify-content: center;
+  margin: 0px auto;
+  width: 70%;
+  background-color: transparent;
+  color: #000000;
+  padding: 10px 20px;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.creer-salon:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+  transform: scale(1.05);
+  transition: all 0.2s;
 }
 
