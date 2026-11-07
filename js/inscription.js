@@ -18,12 +18,6 @@ formulaire.addEventListener("submit", async function (event) {
   const email = document.querySelector("#email").value;
   const cmdp = document.querySelector("#cmdp").value;
 
-  // temporaire pour avoir un affichage dans la console
-  console.log(pseudo);
-  console.log(mdp);
-  console.log(email);
-  console.log(cmdp);
-
   // verifie que les 2 mots de passes sont identiques
   messageErreur.textContent = "";
   if (mdp !== cmdp) {
@@ -33,9 +27,6 @@ formulaire.addEventListener("submit", async function (event) {
 
   // envoies l'email et le mdp à Supabase pour créer le compte
   const { data, error } = await client.auth.signUp({ email: email, password: mdp });
-
-  // temporaire pour les tests
-  console.log(data, error);
 
   // renvoie une erreur si supbase refuse la requete
   if (error) {

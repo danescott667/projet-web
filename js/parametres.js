@@ -21,9 +21,6 @@ async function chargerLangue() {
     .eq("id", monId)
     .single(); // une seul le ligne pas tout le tableau
 
-  // temporaire, pour tester
-  console.log(profil, error);
-
   // renvoie une erreur si supbase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;

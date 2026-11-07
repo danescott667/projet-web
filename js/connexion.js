@@ -18,17 +18,10 @@ formulaire.addEventListener("submit", async function (event) {
     const mdp = document.querySelector("#mdp").value;
     const email = document.querySelector("#email").value;
 
-    // temporaire pour avoir un affichage dans la console
-    console.log(mdp);
-    console.log(email);
 
 
     // envoies l'email et le mdp à Supabase pour se connecter au compte
     const { data, error } = await client.auth.signInWithPassword({ email: email, password: mdp });
-
-    // temporaire pour les tests
-    console.log(data, error);
-
 
     // renvoie une erreur si supbase refuse la requete
     if (error) {

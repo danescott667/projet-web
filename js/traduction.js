@@ -13,8 +13,7 @@ async function traduire(texte, langueCible) {
     const reponse = await fetch(url);
     // lit sa réponse JSON 
     const donnees = await reponse.json();
-    // tempooraire pour tester
-    console.log(donnees);
+
     // renvoie le texte traduit
     return donnees.responseData.translatedText;
 
