@@ -1,6 +1,6 @@
 // fonction qui taduit un texte français vers la langue choisie renvoie le texte tel quel si la langue est le français car par défaut francais
 async function traduire(texte, langueCible) {
-
+// pas besoin d'appeler l'API si la langue choisie est déjà le français
     if (langueCible === "fr") {
 
         return texte;

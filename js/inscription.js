@@ -1,3 +1,5 @@
+// si l'utilisateur est déjà connecté, on l'envoie directement à la messagerie
+
 redirigerSiConnecte();
 
 

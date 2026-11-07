@@ -1,3 +1,4 @@
+// renvoie vers la connexion si personne n'est connecté, et active le bouton déconnexion
 verifierSession();
 activerDeconnexion();
 
@@ -43,7 +44,7 @@ formulaire.addEventListener("submit", async function (event) {
   messageErreur.textContent = "";
   messageSucces.textContent = "";
 
-  // la langue de ce que l'utilisateur a saisi dans les champs
+  // la langue choisie dans le menu déroulant
   const langue = document.querySelector("#langue").value;
 
   // obtenir la session
@@ -52,7 +53,7 @@ formulaire.addEventListener("submit", async function (event) {
   // récupère mon identifiant
   const monId = data.session.user.id;
 
-  // récupère seulement mon profil
+  // enregistre la nouvelle langue dans mon profil
   const { error } = await client
 
     .from("profils")

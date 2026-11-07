@@ -1,3 +1,4 @@
+// renvoie vers la connexion si personne n'est connecté, et active le bouton déconnexion
 verifierSession();
 activerDeconnexion();
 
@@ -58,6 +59,7 @@ formulaireAjout.addEventListener("submit", async function (e) {
     .eq("pseudo", pseudo)
     .maybeSingle();
 
+    // on vérifie les 3 cas d'erreur avant d'ajouter le contact
   if (erreurProfil) {
     messageErreur.textContent = erreurProfil.message;
     return;
@@ -81,7 +83,7 @@ formulaireAjout.addEventListener("submit", async function (e) {
     messageErreur.textContent = "Ce contact est déjà dans votre liste";
     return;
   }
-
+// succès : on vide le champ et on recharge la liste
   champPseudo.value = "";
   chargerContacts();
 });
