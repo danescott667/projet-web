@@ -9,7 +9,7 @@ const messageErreur = document.querySelector("#message-erreur");
 // La variable contient le formulaire lui-même
 const formulaire = document.querySelector("form");
 
-// un ecouteur sur le formulaire qui reagit a l'evennement envoyer
+// un écouteur sur le formulaire qui reagit a l'événement envoyer
 formulaire.addEventListener("submit", async function (event) {
   // permet d'eviter le rechargement automatique du navigateur et permet l'execution de notre code
   event.preventDefault();
@@ -27,10 +27,10 @@ formulaire.addEventListener("submit", async function (event) {
     return;
   }
 
-  // envoies l'email et le mdp à Supabase pour créer le compte
+  // envoie l'email et le mdp à Supabase pour créer le compte
   const { data, error } = await client.auth.signUp({ email: email, password: mdp });
 
-  // renvoie une erreur si supbase refuse la requete
+  // renvoie une erreur si Supabase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
     return;

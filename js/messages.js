@@ -17,7 +17,7 @@ async function MaSession() {
         .from("profils")
         .select("langue")
         .eq("id", monID)
-        .single(); // une seul le ligne pas tout le tableau
+        .single(); // une seule ligne pas tout le tableau
 
     maLangue = profil.langue;
 

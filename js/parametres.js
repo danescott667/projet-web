@@ -20,9 +20,9 @@ async function chargerLangue() {
     .from("profils")
     .select("langue")
     .eq("id", monId)
-    .single(); // une seul le ligne pas tout le tableau
+    .single(); // une seule ligne pas tout le tableau
 
-  // renvoie une erreur si supbase refuse la requete
+  // renvoie une erreur si Supabase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
     return;
@@ -37,7 +37,7 @@ chargerLangue();
 
 // La variable contient le formulaire lui-même
 const formulaire = document.querySelector("form");
-// un ecouteur sur le formulaire qui reagit a l'evennement envoyer
+// un écouteur sur le formulaire qui reagit a l'événement envoyer
 formulaire.addEventListener("submit", async function (event) {
   // permet d'eviter le rechargement automatique du navigateur et permet l'execution de notre code
   event.preventDefault();
@@ -60,7 +60,7 @@ formulaire.addEventListener("submit", async function (event) {
     .update({ langue: langue })
     .eq("id", monId);
 
-  // renvoie une erreur si supbase refuse la requete
+  // renvoie une erreur si Supabase refuse la requete
   if (error) {
     messageErreur.textContent = error.message;
   } else {

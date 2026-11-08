@@ -1,4 +1,4 @@
-// fonction qui taduit un texte français vers la langue choisie renvoie le texte tel quel si la langue est le français car par défaut francais
+// fonction qui traduit un texte français vers la langue choisie renvoie le texte tel quel si la langue est le français car par défaut francais
 async function traduire(texte, langueCible) {
 
     // construction l’adresse de l’API avec le texte encodé et la paire de langues fr -> langue choisie
