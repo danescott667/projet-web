@@ -39,6 +39,7 @@ async function chargerContacts() {
     // bouton pour retirer ce contact de ma liste
     const boutonSupprimer = document.createElement("button");
     boutonSupprimer.textContent = "Supprimer";
+    boutonSupprimer.classList.add("btn-supprimer");
     boutonSupprimer.addEventListener("click", async function () {
       // supprime la ligne de ce contact (la RLS limite aux miennes)
       const { error } = await client
