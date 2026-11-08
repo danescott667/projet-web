@@ -137,25 +137,31 @@ header a {
 
 #message-succes { color: #15803d; }
 
-
-/* Version mobile : écrans de 600px ou moins */
-@media (max-width: 600px) {
-
-  /* bandeau du haut moins haut */
-  .presentation {
-    padding: 15px;
-  }
-
-  /* formulaire : marge sur les côtés pour ne pas coller aux bords */
-  .connexion {
-    margin: 20px 16px;
-  }
-
-  /* liste de contacts : même chose */
-  #liste-contacts {
-    margin: 20px 16px;
-  }
+/* ligne de contact : pseudo à gauche, bouton à droite */
+#liste-contacts li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+/* bouton supprimer : petit, discret, rouge au survol */
+.btn-supprimer {
+  width: auto;
+  padding: 4px 12px;
+  background: transparent;
+  color: #c0392b;
+  border: 1px solid #c0392b;
+  border-radius: 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-supprimer:hover {
+  background-color: #c0392b;
+  color: white;
+}
+
 
 .liste-conversations {
   display: flex;
@@ -347,3 +353,21 @@ li.non-lu .apercu-message {
   transition: all 0.2s;
 }
 
+/* Version mobile : écrans de 600px ou moins */
+@media (max-width: 600px) {
+
+  /* bandeau du haut moins haut */
+  .presentation {
+    padding: 15px;
+  }
+
+  /* formulaire : marge sur les côtés pour ne pas coller aux bords */
+  .connexion {
+    margin: 20px 16px;
+  }
+
+  /* liste de contacts : même chose */
+  #liste-contacts {
+    margin: 20px 16px;
+  }
+}
