@@ -10,7 +10,7 @@ const messageErreur = document.querySelector("#messageErreur");
 
 // fonction pour charger les contacts
 async function chargerContacts() {
-   // vide la liste avant de la réafficher (évite les doublons)
+  // vide la liste avant de la réafficher (évite les doublons)
   liste.innerHTML = "";
 
   // récupère mes contacts + leur pseudo via le lien vers profils (RLS = seulement les miens)
@@ -33,13 +33,30 @@ async function chargerContacts() {
   }
 
   // pour chaque contact : créer une ligne avec son pseudo
-  contacts.forEach(contact => {
+  contacts.forEach((contact) => {
     const li = document.createElement("li");
     li.textContent = contact.profils.pseudo;
+    // bouton pour retirer ce contact de ma liste
+    const boutonSupprimer = document.createElement("button");
+    boutonSupprimer.textContent = "Supprimer";
+    boutonSupprimer.addEventListener("click", async function () {
+      // supprime la ligne de ce contact (la RLS limite aux miennes)
+      const { error } = await client
+        .from("contacts")
+        .delete()
+        .eq("contact_id", contact.contact_id);
+
+      if (error) {
+        messageErreur.textContent = error.message;
+        return;
+      }
+      // recharge la liste à jour
+      chargerContacts();
+    });
+    li.appendChild(boutonSupprimer);
     liste.appendChild(li);
   });
 }
-
 
 // ajout d'un contact par son pseudo
 formulaireAjout.addEventListener("submit", async function (e) {
@@ -59,7 +76,7 @@ formulaireAjout.addEventListener("submit", async function (e) {
     .eq("pseudo", pseudo)
     .maybeSingle();
 
-    // on vérifie les 3 cas d'erreur avant d'ajouter le contact
+  // on vérifie les 3 cas d'erreur avant d'ajouter le contact
   if (erreurProfil) {
     messageErreur.textContent = erreurProfil.message;
     return;
@@ -83,11 +100,10 @@ formulaireAjout.addEventListener("submit", async function (e) {
     messageErreur.textContent = "Ce contact est déjà dans votre liste";
     return;
   }
-// succès : on vide le champ et on recharge la liste
+  // succès : on vide le champ et on recharge la liste
   champPseudo.value = "";
   chargerContacts();
 });
-
 
 // charge les contacts dès l'ouverture de la page
 chargerContacts();
