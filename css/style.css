@@ -371,3 +371,28 @@ li.non-lu .apercu-message {
     margin: 20px 16px;
   }
 }
+
+.fenetre-salon {
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #000000;
+  background-color: #ffffff;
+}
+
+.fenetre-salon::backdrop{
+  background-color:rgba(0, 0, 0, 0.5)
+}
+
+.input-salon {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.boutons-salon {
+  display: flex;
+  justify-content: space-between; 
+  gap: 10px; 
+}

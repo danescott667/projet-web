@@ -63,7 +63,7 @@ const { data: salons, error } = await client
       const pseudoAuteur = msg.profils ? msg.profils.pseudo : "";
       mettreAJourApercu(salon.id, msg.contenu, pseudoAuteur, prop);
     } else {
-      mettreAJourApercu(salon.id, "Aucune conversation", pseudoAuteur, false);
+      mettreAJourApercu(salon.id, "Aucune conversation", "", false);
     }
 
         li.addEventListener("click", async () => {
@@ -95,6 +95,95 @@ const { data: salons, error } = await client
         });
         liste.appendChild(li);
     };
+
+    
+    // 1. Récupérer les éléments de la fenêtre et du bouton
+    const fenetre = document.querySelector("#fenetre-salon");
+    const btnOuvrir = document.querySelector(".creer-salon");
+    const btnAnnuler = document.querySelector("#btn-annuler");
+    const inputNomSalon = document.querySelector("#nom-nouveau-salon");
+    const formSalon = document.querySelector("#form-salon");
+
+    // 2. Ouvrir la fenêtre au clic sur "Créer un salon"
+    if (btnOuvrir) {
+        btnOuvrir.addEventListener("click", () => {
+            inputNomSalon.value = ""; // Vider le champ à l'ouverture
+            fenetre.showModal();        // Ouvre la boîte de dialogue nativement
+        });
+    }
+
+    // 3. Fermer la fenêtre si on clique sur "Annuler"
+    if (btnAnnuler) {
+        btnAnnuler.addEventListener("click", () => {
+            fenetre.close();
+        });
+    }
+
+    // 4. Valider le formulaire de la modale (Créer le salon dans Supabase)
+    if (formSalon) {
+        formSalon.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const nomSalon = inputNomSalon.value.trim();
+
+            if (!nomSalon) return;
+
+            // Insertion dans la base de données Supabase
+            const { data: nouveauSalon, error } = await client
+                .from("salons")
+                .insert([{ nom: nomSalon }])
+                .select()
+                .single();
+
+            if (error) {
+                console.log("Erreur lors de la création du salon :", error.message);
+                return;
+            }
+
+            // Fermer la fenêtre
+            fenetre.close();
+
+            // Créer dynamiquement le <li> dans la liste de gauche pour l'afficher tout de suite
+            const liste = document.querySelector("#liste-conversations");
+            const li = document.createElement("li");
+            elementsSalons[nouveauSalon.id] = li;
+
+            const nom = document.createElement("strong");
+            nom.textContent = nouveauSalon.nom;
+            li.appendChild(nom);
+
+            const lastMessage = document.createElement("span");
+            lastMessage.classList.add("apercu-message");
+            li.appendChild(lastMessage);
+
+            // Ajouter l'écouteur de clic pour pouvoir ouvrir ce nouveau salon
+            li.addEventListener("click", async () => {
+                li.classList.remove("non-lu");
+                salonActuel = nouveauSalon.id;
+                document.querySelector("#salon-titre").textContent = nouveauSalon.nom;
+                
+                const historique = document.querySelector("#historique-messages");
+                historique.innerHTML = "";
+
+                const { data: messages, error } = await client
+                    .from("messagerie")
+                    .select("*, profils(pseudo)")
+                    .eq("Salon_id", nouveauSalon.id)
+                    .order("created_at", { ascending: true });
+
+                if (error) {
+                    console.log("Erreur chargement messages :", error);
+                    return;
+                }
+
+                messages.forEach(message => {
+                    afficherMessages(message);
+                });
+            });
+
+            liste.appendChild(li);
+            mettreAJourApercu(nouveauSalon.id, "Aucune conversation", "", false);
+        });
+    }
 
     if (formulaire) {
         formulaire.addEventListener("submit", async function (event) {
