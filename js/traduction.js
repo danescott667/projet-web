@@ -1,7 +1,7 @@
-// fonction qui traduit un texte français vers la langue choisie renvoie le texte tel quel si la langue est le français car par défaut francais
+// fonction qui traduit u// traduit un texte vers la langue choisie ; la langue d'origine est détectée automatiquement par l'APIn texte français vers la langue choisie renvoie le texte tel quel si la langue est le français car par défaut francais
 async function traduire(texte, langueCible) {
 
-    // construction l’adresse de l’API avec le texte encodé et la paire de langues fr -> langue choisie
+    // construit l'adresse de l'API : texte encodé + détection automatique -> langue choisie
     const url = "https://api.mymemory.translated.net/get?q=" + encodeURIComponent(texte) + "&langpair=Autodetect|" + langueCible;
 
     // appelle l'API MyMemory
