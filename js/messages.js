@@ -1,14 +1,19 @@
+// Vérification de la session et initialisation des fonctions de déconnexion
 verifierSession();
 activerDeconnexion();
 
+// Déclaration des variables globales
 let monID = null;
 let salonActuel = null;
 let maLangue = null;
 const formulaire = document.querySelector("#formulaire");
 const champSaisie = document.querySelector("#message");
-const elementsSalons = {};
+const elementsSalons = {}; // Dictionnaire pour associer l'ID d'un salon à son élément HTML
 
+// Fonction principale asynchrone qui charge l'utilisateur, les salons et écoute les messages en temps réel
 async function MaSession() {
+
+    // Récupération de la session active de l'utilisateur connecté via Supabase Auth
     const { data } = await client.auth.getSession();
     monID = data.session.user.id;
 
@@ -32,13 +37,14 @@ const { data: salons, error } = await client
     return;
     }
 
-    // récupère la liste de la page 
+    // Récupère le conteneur de la liste des conversations dans le DOM
     const liste = document.querySelector("#liste-conversations");
 
  // For...of = permet de faire des "await" pour chaque profil
   for (const salon of salons) {
     const li = document.createElement("li");
 
+    // Stocke la référence du <li> dans le dictionnaire global
     elementsSalons[salon.id] = li;
 
     const nom = document.createElement("strong");
@@ -57,6 +63,7 @@ const { data: salons, error } = await client
       .order("created_at", { ascending: false })
       .limit(1);
 
+    // Si un message existe, on met à jour l'aperçu avec son contenu sinon on indique qu'il n'y a rien
     if (dernierMessage && dernierMessage.length > 0) {
       const msg = dernierMessage[0];
       const prop = (msg.expediteur_id == monID);
@@ -66,34 +73,39 @@ const { data: salons, error } = await client
       mettreAJourApercu(salon.id, "Aucune conversation", "", false);
     }
 
-        li.addEventListener("click", async () => {
+    // Écouteur de clic sur un salon de la liste pour l'ouvrir et charger ses messages
+    li.addEventListener("click", async () => {
 
-            li.classList.remove("non-lu");
+      li.classList.remove("non-lu");
 
       salonActuel = salon.id;
       const destinataire = document.querySelector("#salon-titre");
       destinataire.textContent = salon.nom;
 
       const historique = document.querySelector("#historique-messages")
-      historique.innerHTML = ""
-  // récupère tous les messages de ce salon
+      historique.innerHTML = "" // Vide l'historique affiché à l'écran
+
+  // récupère tous les messages de ce salon dans l'ordre chronologique
      const { data: messages, error } = await client
     .from("messagerie")
     .select("*, profils(pseudo)")
     .eq("Salon_id", salon.id)
     .order("created_at", { ascending: true });
 
-            if (error) {
-                console.log("Erreur lors du chargement des messages :", error);
-                return;
-            }
+    if (error) {
+        console.log("Erreur lors du chargement des messages :", error);
+        return;
+    }
 
-            messages.forEach(message => {
-                afficherMessages(message);
-            });
+    // Affiche chaque message 
+    messages.forEach(message => {
+        afficherMessages(message);
+    });
 
-        });
-        liste.appendChild(li);
+    });
+
+    // Ajoute le <li> construit dans la liste HTML des conversations
+    liste.appendChild(li);
     };
 
     
@@ -108,7 +120,7 @@ const { data: salons, error } = await client
     if (btnOuvrir) {
         btnOuvrir.addEventListener("click", () => {
             inputNomSalon.value = ""; // Vider le champ à l'ouverture
-            fenetre.showModal();        // Ouvre la boîte de dialogue nativement
+            fenetre.showModal();        // Ouvre la boîte de dialogue
         });
     }
 
@@ -185,7 +197,9 @@ const { data: salons, error } = await client
         });
     }
 
+    // Gestion de l'envoi de messages
     if (formulaire) {
+
         formulaire.addEventListener("submit", async function (event) {
             // 2. Empêcher le rechargement de la page par défaut
             event.preventDefault();
@@ -193,13 +207,13 @@ const { data: salons, error } = await client
             // 3. Lire le texte et nettoyer les espaces
             const texteMessage = champSaisie.value.trim();
 
-        // Si le champ est vide OU qu'aucun salon n'est sélectionné, on stoppe
-        if (texteMessage === "" || !salonActuel) {
-            return;
-        }
+            // Si le champ est vide OU qu'aucun salon n'est sélectionné, on stoppe
+            if (texteMessage === "" || !salonActuel) {
+                return;
+            }
 
-        // 4. Insérer le message dans la base de données Supabase
-        const { data: nouveauMessage, error } = await client
+            // 4. Insérer le message dans la base de données Supabase
+            const { data: nouveauMessage, error } = await client
             .from("messagerie") 
             .insert([
                 {
@@ -211,7 +225,7 @@ const { data: salons, error } = await client
             .select()
             .single();
 
-            // 5. Gérer l'erreur ou finaliser l'envoi
+        // 5. Gérer l'erreur ou finaliser l'envoi
             if (error) {
                 console.log("Erreur lors de l'envoi du message :", error);
                 return;
@@ -221,9 +235,11 @@ const { data: salons, error } = await client
             champSaisie.value = "";
 
             mettreAJourApercu(salonActuel, nouveauMessage.contenu, "Vous",true);
-    });
+        });
     }
 
+    // --- TEMPS RÉEL (SUPABASE REALTIME) ---
+    // Écoute les insertions de nouveaux messages en direct sur la base de données
     client
     .channel("message-canal")
     .on(
@@ -245,14 +261,16 @@ const { data: salons, error } = await client
                 .single();
             
             const pseudo = p ? p.pseudo : "Inconnu";
-              
+            
+            // Met à jour l'aperçu du salon concerné dans la colonne de gauche
             mettreAJourApercu(messageRecu.Salon_id, messageRecu.contenu, pseudo, estMoi);
             
+            // Si l'utilisateur est actuellement dans le salon qui reçoit le message, on l'affiche direct à l'écran
             if (salonActuel === messageRecu.Salon_id) {
                 messageRecu.profils = { pseudo: pseudo };
                 afficherMessages(messageRecu);
             } else {
-                // Marquer le contact comme non lu
+                // Marquer le message comme non lu
                 if (!estMoi) {
                     const salonConcerne = elementsSalons[messageRecu.Salon_id];
                     if (salonConcerne) {
@@ -265,6 +283,7 @@ const { data: salons, error } = await client
     .subscribe();
 }
 
+// Fonction pour créer et injecter visuellement une bulle de message
 function afficherMessages(message) {
 
     const liste = document.querySelector("#historique-messages");
@@ -272,6 +291,7 @@ function afficherMessages(message) {
     const div = document.createElement("div");
     div.classList.add("bulle");
 
+    // Applique une classe CSS différente selon si le message a été envoyé par soi-même ou reçu
     if (message.expediteur_id === monID) {
         div.classList.add("message-envoye");
     } else {
@@ -286,6 +306,7 @@ function afficherMessages(message) {
     texte.textContent = message.contenu;
     div.appendChild(texte);
 
+    // Bouton de traduction attaché à chaque message
     const btnTrad = document.createElement("button");
     btnTrad.classList.add("traduire");
     btnTrad.textContent = "Traduire";
@@ -303,17 +324,19 @@ function afficherMessages(message) {
 
     liste.appendChild(div);
 
-
+    // Force le défilement automatique de la zone de chat vers le bas (dernier message)
     const defilement = document.querySelector("#messages");
     defilement.scrollTop = defilement.scrollHeight;
 }
 
+// Fonction qui formate proprement l'affichage des dates des messages
 function formaterDate(date) {
     const dateObj = new Date(date);
     // Formate la date actuelle
     return dateObj.toLocaleDateString("fr-CA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
 
+// Fonction qui met à jour l'aperçu d'un salon dans la liste de gauche et fait remonter le salon en haut de la liste
 function mettreAJourApercu(idSalon, messagestext, pseudoText, moi) {
     const salon_Concerne = elementsSalons[idSalon];
     if (salon_Concerne) {
@@ -328,25 +351,27 @@ function mettreAJourApercu(idSalon, messagestext, pseudoText, moi) {
             }
         }
         const li = document.querySelector("#liste-conversations");
-        li.prepend(salon_Concerne);
+        li.prepend(salon_Concerne); // Remonte le salon actif en haut de la liste
         }
 }
 
 MaSession();
 
+// --- BARRE DE RECHERCHE DE SALONS ---
 const recherche = document.querySelector("#salon-recherche");
 
 if (recherche) {
     recherche.addEventListener("input", function (event) {
         const salon = event.target.value.toLowerCase();
         const liste_salon = document.querySelectorAll("#liste-conversations li");
+        // Filtre la liste des salons en temps réel selon la saisie de l'utilisateur
         liste_salon.forEach(li => {
             const elementPseudo = li.querySelector("strong");
             const pseudo = elementPseudo ? elementPseudo.textContent.toLowerCase() : "";
             if (pseudo.includes(salon)) {
-                li.style.display = "";
+                li.style.display = "";// Affiche le salon si ça correspond
             } else {
-                li.style.display = "none";
+                li.style.display = "none";// Masque le salon sinon
             }
         });
     });

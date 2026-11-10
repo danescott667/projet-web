@@ -162,27 +162,25 @@ header a {
   color: white;
 }
 
-
+/* Conteneur global de la liste des salons */
 .liste-conversations {
-  display: flex;
-  flex-direction: column;
   padding: 10px;
 }
 
+/* Style de chaque salon dans la liste */
 div li {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   background-color:#ffffff;
   border: 1px solid;
   border-radius: 6px;
   cursor: pointer;
   padding: 12px 15px;
+  margin-bottom: 10px;
 }
 
-div li:hover {
-    background-color: #55a7e6;
-  }
-
+/* Conteneur principal englobant la barre latérale et la zone de tchat */
 .profil {
   display: flex;
   flex-direction: row;
@@ -190,32 +188,30 @@ div li:hover {
   padding: 20px;
 }
 
+/* Barre latérale de navigation des salons */
 .liste-conversation {
   width: 300px;
   border-right: 3px solid #000000;
 }
 
-#liste-conversations li {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
-
-#liste-conversations li:hover {
+/* Effet de survol sur un salon */
+div li:hover {
   transform: scale(1.05);
   transition: all 0.2s;
+  background-color: #c7c7c7;
 }
 
-#liste-conversations li strong {
+/* Style du nom du salon */
+div li strong {
   font-size: 20px;
-
 }
 
+/* Style de la barre de recherche */
 .liste-conversation input {
   border-radius: 20px;
 }
 
+/* Style du bouton de recherche */
 .recherche {
   padding: 2px;
   width: 40%;
@@ -227,12 +223,14 @@ div li:hover {
   transition: all 0.2s;
 }
 
+/* Conteneur principal de la zone de tchat */
 .message-container {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
+/* Barre d'envoi des messages */
 .envoi-barre {
   display: flex;
   align-items: center;
@@ -240,21 +238,27 @@ div li:hover {
   width: 100%;
   max-width: none;
 }
+
+/* Champ de saisie du message */
 .envoi-barre input {
     margin-bottom: 0;
     border-radius: 20px;
 }
+
+/* Bouton d'envoi du message */
 .envoi-barre button {
     width: auto;           /* annule le width:100% du bouton général */
     border-radius: 20px;
     cursor: pointer;
 }
 
+
 .envoi-barre button:hover {
   transform: scale(1.05);
   transition: all 0.2s;
 }
 
+/* Fenêtre défilante contenant les messages */
 .messages {
   box-shadow: 0 4px 12px;
   border-radius: 12px;
@@ -263,12 +267,14 @@ div li:hover {
   padding: 10px;
 }
 
+/* Conteneur des messages */
 .historique-messages {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+/* Style général des bulles de message */
 .bulle{
   display: flex;
   flex-direction: column;
@@ -279,24 +285,28 @@ div li:hover {
   word-break: break-word;
 }
 
+/* Message envoyé par l'utilisateur */
 .message-envoye {
   background-color: #55a7e6;
   align-self: flex-end;
   border-bottom-right-radius: 4px;
 }
-
+  
+/* Message reçu d'un autre utilisateur */
 .message-recu {
   background-color: #d5d0d0;
   align-self: flex-start;
   border-bottom-left-radius: 4px;
 }
 
+/* Date et heure du message */
 .date {
   font-size: 12px;
   color: #666;
   margin-top: 5px;
 }
 
+/* Titre du salon */
 .salon-titre {
   margin-bottom: 10px;
   font-weight: bold;
@@ -308,6 +318,7 @@ div li:hover {
   border: 3px groove #000000;
 }
 
+/* Bouton de traduction */
 .traduire {
   width: auto;
   background-color: transparent;
@@ -318,24 +329,27 @@ div li:hover {
   cursor: pointer;
 }
 
+/* Aperçu du message */
 .apercu-message {
   font-size: 12px;
   color: #666;
   width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  overflow: hidden; /* Masque le texte débordant */
+  text-overflow: ellipsis; /* Ajoute des points de suspension */
 }
 
+/* Message non lu (Notification) */
 li.non-lu .apercu-message {
   font-weight: bold;
   color: #000000;
 }
 
+/* Bouton de création de salon */
 .creer-salon {
   display: flex;
-  justify-content: center;
-  margin: 0px auto;
+  justify-content: center; 
+  margin: 0px auto; /* Centre le bouton */
   width: 70%;
   background-color: transparent;
   color: #000000;
@@ -343,7 +357,7 @@ li.non-lu .apercu-message {
   border: 1px solid #000000;
   border-radius: 6px;
   font-size: 1em;
-  cursor: pointer;
+  cursor: pointer; /* Curseur de la souris */
 }
 
 .creer-salon:hover {
@@ -372,6 +386,7 @@ li.non-lu .apercu-message {
   }
 }
 
+/* Fenêtre de la création d'un salon */
 .fenetre-salon {
   padding: 20px;
   border-radius: 8px;
@@ -379,10 +394,12 @@ li.non-lu .apercu-message {
   background-color: #ffffff;
 }
 
+/* Assombrissement de l'arrière-plan */
 .fenetre-salon::backdrop{
   background-color:rgba(0, 0, 0, 0.5)
 }
 
+/* Input lors de la création d'un salon */
 .input-salon {
   width: 100%;
   padding: 10px;
@@ -391,6 +408,7 @@ li.non-lu .apercu-message {
   box-sizing: border-box;
 }
 
+/* Boutons lors de la création d'un salon */
 .boutons-salon {
   display: flex;
   justify-content: space-between; 

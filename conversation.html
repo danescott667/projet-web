@@ -29,7 +29,10 @@
       <button type="button" id="deconnexion">Se déconnecter</button>
     </header>
 
+    <!-- Conteneur principal avec deux colonnes -->
     <div class="profil">
+
+        <!-- Section de gauche : liste des salons -->
         <aside class="liste-conversation">
             <h2>Salons</h2>
             <input id="salon-recherche" type="search" placeholder="Rechercher un salon...">
@@ -37,6 +40,8 @@
             <div id="liste-conversations" class="liste-conversations"></div>
             <button id="creer-salon" class="creer-salon">Créer un salon</button>
         </aside>
+
+        <!-- Section de droite : affichage des messages du salon sélectionné et barre de saisie -->
         <section class="message-container">
             <h2 id="salon-titre" class="salon-titre">Sélectionner un salon</h2>
             <div id="messages" class="messages">
@@ -48,6 +53,8 @@
             </form>
         </section>
     </div>
+    
+    <!-- Fenêtre pour créer un salon -->
     <dialog id="fenetre-salon" class="fenetre-salon">
         <form method="dialog" id="form-salon">
             <h3>Créer un nouveau salon</h3>
